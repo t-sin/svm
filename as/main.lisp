@@ -14,10 +14,31 @@
        (char= (aref line 0) #\.)))
 
 (defun tokenize (line)
-  (let* ((tokens* (split-sequence-if (lambda (c) (member c '(#\space #\tab) :test #'char=))
-                                    line))
-         (tokens (remove-if (lambda (s) (zerop (length (trim s)))) tokens*)))
-    (first (split-sequence-if (lambda (s) (char= (aref s 0) #\;)) tokens))))
+  (let (tokens)
+    (loop
+      :for ch :across line
+      :with in-string-p := nil
+      :with buffer := nil
+      :do (if in-string-p
+              (if (char= ch #\")
+                  (progn
+                    (push (concatenate 'string "\"" (nreverse buffer) "\"") tokens)
+                    (setf buffer nil
+                          in-string-p nil))
+                  (push ch buffer))
+              (cond ((char= ch #\") (setf in-string-p t))
+                    ((char= ch #\;)
+                     (progn
+                       (push (concatenate 'string (nreverse buffer)) tokens)
+                       (return-from tokenize (remove-if (lambda (s) (zerop (length s))) (nreverse tokens)))))
+                    ((member ch '(#\space #\tab) :test #'char=)
+                     (progn
+                       (push (concatenate 'string (nreverse buffer)) tokens)
+                       (setf buffer nil)))
+                    (t (push ch buffer))))
+      :finally (progn
+                 (push (concatenate 'string (nreverse buffer)) tokens)
+                 (return-from tokenize (remove-if (lambda (s) (zerop (length s))) (nreverse tokens)))))))
 
 (defun read-data (line)
   (tokenize line))
@@ -49,4 +70,7 @@
                        ((string= line* ".code") nil)
                        (t (push (read-code line*) (getf program :code)))))
                 (t (error "oops."))))
-    :finally (return-from read-asm program)))
+    :finally (return-from read-asm
+               (loop
+                 :for (k v) :on program :by #'cddr
+                 :append (list k (nreverse v))))))
