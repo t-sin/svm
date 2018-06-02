@@ -17,6 +17,7 @@
     :until (eq line :eof)
     :do (let ((trimmed (string-trim '(#\space #\tab) line)))
           (cond ((zerop (length trimmed)) nil)
+                ((char= (aref trimmed 0) #\;) nil)
                 ((string= trimmed ".data")
                  (if (getf program :data)
                      (error ".data section appears twice!")
