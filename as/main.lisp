@@ -25,4 +25,4 @@
                  (if (getf program :code)
                      (error ".code section appears twice!")
                      (setf (getf program :code) (read-code stream))))
-                (t (error (format nil "this ~s is not section name")))))))
+                (t (error (format nil "this ~s is not section name" trimmed)))))))
