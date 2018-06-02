@@ -1,8 +1,8 @@
 (in-package #:cl-user)
-(defpackage #:svm-as/as/main
+(defpackage #:svm-as
   (:use #:cl)
   (:export #:read-asm))
-(in-package #:svm-as/as/main)
+(in-package #:svm-as)
 
 (defun read-data (stream)
   :data)
