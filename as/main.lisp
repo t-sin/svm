@@ -15,7 +15,7 @@
     :for line := (read-line stream nil :eof)
     :with program := nil
     :until (eq line :eof)
-    :do (let ((trimmed (string-trim '(#\spece #\tab) line)))
+    :do (let ((trimmed (string-trim '(#\space #\tab) line)))
           (cond ((zerop (length trimmed)) nil)
                 ((string= trimmed ".data")
                  (if (getf program :data)
