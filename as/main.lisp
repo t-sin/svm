@@ -41,10 +41,14 @@
                  (return-from tokenize (remove-if (lambda (s) (zerop (length s))) (nreverse tokens)))))))
 
 (defun read-data (line)
-  (tokenize line))
+  (destructuring-bind (name value)
+      (tokenize line)
+    (list (intern (string-upcase name) :keyword) value)))
 
 (defun read-code (line)
-  (tokenize line))
+  (destructuring-bind (name . operands)
+      (tokenize line)
+    (append (list (intern (string-upcase name) :keyword)) operands)))
 
 (defun read-asm (stream)
   (loop
