@@ -6,37 +6,52 @@ String VM is a toy virtual machine. String VM is characterised with these featur
 - register based
 - codes and datum are stored in the same memory
 
-## Registers
+
+## Goals
+
+- Understand programming languages
+- Run my Lisp!
+
+
+## Tools
+
+- assembler (Common Lisp)
+- virtual machine (Common Lisp? C? Nim?)
+
+
+## About VM
+
+### Registers
 
 - `pc`: program counter
 - `r0` ~ `r6`: general purpus register
 
-## Data types
+### Data types
 
 - bytes
 - integers
 - UTF-8 character strings
 
-## Instructions
+### Instructions
 
-### Arithmetic instructions
+#### Arithmetic instructions
 
 - `add`
 - `mul`
 - `div`
 
-### Memory access instructions
+#### Memory access instructions
 
 - `load`
 - `store`
 
-### Flow controlling instructions
+#### Flow controlling instructions
 
 - `ifeq`
 - `ifneq`
 - `jump`
 
-### Miscellaneous instructions
+#### Miscellaneous instructions
 
 - `nop`
 - `hw`
