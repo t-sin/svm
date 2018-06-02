@@ -1,6 +1,8 @@
 (in-package #:cl-user)
 (defpackage #:svm-as
   (:use #:cl)
+  (:import-from #:split-sequence
+                #:split-sequence-if)
   (:export #:read-asm))
 (in-package #:svm-as)
 
@@ -11,11 +13,17 @@
   (and (not (zerop (length line)))
        (char= (aref line 0) #\.)))
 
+(defun tokenize (line)
+  (let* ((tokens* (split-sequence-if (lambda (c) (member c '(#\space #\tab) :test #'char=))
+                                    line))
+         (tokens (remove-if (lambda (s) (zerop (length (trim s)))) tokens*)))
+    tokens))
+
 (defun read-data (line)
-  line)
+  (tokenize line))
 
 (defun read-code (line)
-  line)
+  (tokenize line))
 
 (defun read-asm (stream)
   (loop
