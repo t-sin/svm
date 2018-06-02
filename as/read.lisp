@@ -1,10 +1,10 @@
 (in-package #:cl-user)
-(defpackage #:svm-as
+(defpackage #:svm-as/as/read
   (:use #:cl)
   (:import-from #:split-sequence
                 #:split-sequence-if)
-  (:export #:read-asm))
-(in-package #:svm-as)
+  (:export #:read-asm/as/read))
+(in-package #:svm-as/as/read)
 
 (defun trim (str)
   (string-trim '(#\space #\tab) str))
