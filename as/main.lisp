@@ -17,7 +17,7 @@
   (let* ((tokens* (split-sequence-if (lambda (c) (member c '(#\space #\tab) :test #'char=))
                                     line))
          (tokens (remove-if (lambda (s) (zerop (length (trim s)))) tokens*)))
-    tokens))
+    (first (split-sequence-if (lambda (s) (char= (aref s 0) #\;)) tokens))))
 
 (defun read-data (line)
   (tokenize line))
