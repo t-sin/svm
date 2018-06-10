@@ -53,7 +53,7 @@ int: signed numbers represented as 32-bit.")
           ((null (getf attr :type)) (error (format nil "operand type is not specified: ~s." attr)))
           (t (make-<operand> :name name :types (getf attr :type))))))
 
-(defmacro defop (name () doc body)
+(defmacro defop (name () doc &optional body)
   (let ((name (intern (symbol-name name) :keyword)))
     `(setf (getf +opcode-specs+ ,name)
            (make-<instruction> :name ,name
@@ -104,3 +104,12 @@ int: signed numbers represented as 32-bit.")
 (defop jump ()
   ""
   ((addr :type :addr)))
+
+
+;;; miscellenous operations
+
+(defop nop ()
+  "")
+
+(defop hw ()
+  "Hellow SVM world!")
