@@ -1,13 +1,19 @@
 (in-package #:cl-user)
 (defpackage #:svm-vm
   (:use #:cl)
-  (:import-from #:virtual-machine
-                #:make-vm
-                #:dump-vm
-                #:step-program
-                #:run-program)
   (:export #:make-vm
            #:dump-vm
            #:step-program
            #:run-program))
 (in-package #:svm-vm)
+
+
+(defstruct vm
+  memory access-mem dump-mem
+  pc r0 r1 r2 r3 r4 r5 r6 r7)
+
+(defun dump-vm (vm))
+
+(defun step-program (vm))
+
+(defun run-program (vm))
