@@ -17,4 +17,4 @@
       (error (format nil "~s is out of memory!!" addr))))
 
 (defun dump-simple-memory (mem)
-  (format nil "~s~" mem))
+  (format nil "~s" mem))
