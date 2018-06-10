@@ -3,5 +3,8 @@
   (:use #:cl)
   (:import-from #:svm-as/as/read
                 #:read-asm)
-  (:export #:read-asm))
+  (:import-from #:svm-as/as/validate
+                #:validate-asm)
+  (:export #:read-asm
+           #:validate-asm))
 (in-package #:svm-as)

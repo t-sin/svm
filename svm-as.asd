@@ -5,4 +5,5 @@
   :author "TANAKA Shinichi"
   :license "LLGPL"
   :depends-on ("split-sequence"
+               "svm-ins"
                "svm-as/as/package"))
