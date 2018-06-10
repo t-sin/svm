@@ -65,17 +65,20 @@ int: signed numbers represented as 32-bit.")
 (defop add ()
   ""
   ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))))
+   (opr2 :type (:int :reg))
+   (res :type :reg)))
 
 (defop mul ()
   ""
   ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))))
+   (opr2 :type (:int :reg))
+   (res :type :reg)))
 
 (defop div ()
   ""
   ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))))
+   (opr2 :type (:int :reg))
+   (res :type :reg)))
 
 ;;; memory access instructions
 
