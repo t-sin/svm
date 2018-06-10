@@ -84,7 +84,7 @@ int: signed numbers represented as 32-bit.")
 
 (defop load ()
   ""
-  ((opr1 :type (:reg :addr))
+  ((opr1 :type (:reg :addr :int))
    (opr2 :type :reg)))
 
 (defop store ()
