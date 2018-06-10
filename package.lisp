@@ -1,6 +1,7 @@
 (in-package #:cl-user)
-(defpackage #:svm/package
+(defpackage #:svm
   (:use #:cl)
-  (:export #:nil))
-(in-package #:svm/package)
-
+  (:import-from #:svm-as
+                #:read-asm)
+  (:export #:read-asm))
+(in-package #:svm)
