@@ -1,11 +1,11 @@
 (in-package #:cl-user)
-(defpackage #:svm-vm
+(defpackage #:svm-vm/vm/virtual-machine
   (:use #:cl)
   (:export #:make-vm
            #:dump-vm
            #:step-program
            #:run-program))
-(in-package #:svm-vm)
+(in-package #:svm-vm/vm/virtual-machine)
 
 
 (defstruct vm
