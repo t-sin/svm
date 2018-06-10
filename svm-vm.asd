@@ -1,4 +1,4 @@
-(defsystem #:svm-as
+(defsystem #:svm-vm
   :class :package-inferred-system
   :description "Virtual Machine for SVM"
   :version "0.1"
