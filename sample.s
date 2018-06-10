@@ -7,7 +7,7 @@
 .code
     load %testnum $r0  ; load from memory
     load 43 $r1        ; load from immediate
-    add $r1 $2 $r3     ; add 42 + 43
+    add $r1 $r2 $r3    ; add 42 + 43
     store $r3 &400     ; store into addr (400)
     hw                 ; hello assembly world!
 
