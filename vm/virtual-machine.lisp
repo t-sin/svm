@@ -8,8 +8,6 @@
 (in-package #:svm-vm/vm/virtual-machine)
 
 (defstruct vm
-  memory access-mem dump-mem
-  pc r0 r1 r2 r3 r4 r5 r6 r7
   "String Virtual Machine.
 
 # Memory
@@ -39,7 +37,9 @@ byte is too small to express. Multiple-bytes data are coded with ordering **litt
 
 - word length
 
-")
+"
+  memory access-mem dump-mem
+  pc r0 r1 r2 r3 r4 r5 r6 r7)
 
 (defun make-vm* (memory mem-accesser mem-dumper
                 &optional (pc 0) (r0 0) (r1 0) (r2 0) (r3 0)
