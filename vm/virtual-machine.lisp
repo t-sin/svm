@@ -28,12 +28,27 @@ The smallest data is a byte, but some data types are needed multiple bytes becau
 byte is too small to express. Multiple-bytes data are coded with ordering **little endian**
 -- least significant byte are placed as left, and most significant byte are placed at left.
 
-## General format
+## Program
 
-- data table
-- code area
+The program which stores in the memory consists of two parts:
 
-## Binary instruction format
+1. data area
+2. code area
+
+*Data area* stores intermediate values in assembly code. *Code area* stores program code
+itsself as binary instruction format.
+
+*Data* are represented as and consist of, a byte or multiple bytes.
+
+*Code* is a program run by VM. This is described at chapter below.
+
+### Binary instruction format
+
++--------+--------+---------+---------+----------+
+| 6-bit  | 1-bit  | 3-bit   | 3-bit   | 3-bit    |
++--------+--------+---------+---------+----------+
+| opcode | unused | oprand1 | oprand2 | operand3 |
++--------+--------+---------+---------+----------+
 
 - word length
 
