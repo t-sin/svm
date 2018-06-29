@@ -1,5 +1,5 @@
 (in-package #:cl-user)
-(defpackage #:svm-as/as/program
+(defpackage #:svm-program
   (:use #:cl)
   (:export #:<constant>
            #:make-<constant>
@@ -17,7 +17,7 @@
            #:make-<program>
            #:<program>-constants
            #:<program>-code))
-(in-package #:svm-as/as/program)
+(in-package #:svm-program)
 
 (defstruct <constant>
   type value)
