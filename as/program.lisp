@@ -1,30 +1,29 @@
 (in-package #:cl-user)
 (defpackage #:svm-as/as/program
   (:use #:cl)
-  (:export #:constant
-           #:make-constant
-           #:constant-type
-           #:constant-name
-           #:constant-value
+  (:export #:<constant>
+           #:make-<constant>
+           #:<constant>-type
+           #:<constant>-value
 
-           #:instruction
-           #:make-instruction
-           #:instruction-name
-           #:instruction-operand-1
-           #:instruction-operand-2
-           #:instruction-operand-3
+           #:<operation>
+           #:make-<operation>
+           #:<operation>-op
+           #:<operation>-opr1
+           #:<operation>-opr2
+           #:<operation>-opr3
 
-           #:program
-           #:make-program
-           #:program-constant
-           #:program-code))
+           #:<program>
+           #:make-<program>
+           #:<program>-constants
+           #:<program>-code))
 (in-package #:svm-as/as/program)
 
-(defstruct constant
-  type name value)
+(defstruct <constant>
+  type value)
 
-(defstruct instruction
-  name operand-1 operand-2 operand-3)
+(defstruct <operation>
+  op opr1 opr2 opr3)
 
-(defstruct program
-  constant code)
+(defstruct <program>
+  constants code)
