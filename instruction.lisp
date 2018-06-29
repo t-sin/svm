@@ -38,10 +38,10 @@ int: signed numbers represented as 32-bit.")
   (format s "<~a>" (<operand>-name o)))
 
 (defstruct <instruction>
-  name operands doc)
+  name opcode operands doc)
 
 (defmethod print-object ((i <instruction>) s)
-  (format s "<~a [~{~s~^ ~}]>" (<instruction>-name i) (<instruction>-operands i)))
+  (format s "<~x:~a [~{~s~^ ~}]>" (<instruction>-opcode i) (<instruction>-name i) (<instruction>-operands i)))
 
 (defparameter +opcode-specs+ nil)
 
@@ -53,66 +53,80 @@ int: signed numbers represented as 32-bit.")
           ((null (getf attr :type)) (error (format nil "operand type is not specified: ~s." attr)))
           (t (make-<operand> :name name :types (getf attr :type))))))
 
-(defmacro defop (name () doc &optional body)
+(defmacro defop ((name opcode) doc &optional body)
   (let ((name (intern (symbol-name name) :keyword)))
-    `(setf (getf +opcode-specs+ ,name)
-           (make-<instruction> :name ,name
+    `(push (make-<instruction> :name ,name
+                               :opcode ,opcode
                                :operands (mapcar #'parse-operand ',body)
-                               :doc ,doc))))
+                               :doc ,doc)
+           +opcode-specs+)))
 
-;;; arithmetic instructions
+(defun print-instructions ()
+  +opcode-specs+)
 
-(defop add ()
-  ""
-  ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))
-   (res :type :reg)))
 
-(defop mul ()
-  ""
-  ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))
-   (res :type :reg)))
+;;; miscellenous operations
 
-(defop div ()
-  ""
-  ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))
-   (res :type :reg)))
+(defop (nop #x00)
+  "")
+
+(defop (hw #x01)
+  "Hellow SVM world!")
 
 ;;; memory access instructions
 
-(defop load ()
+(defop (load #x04)
   ""
   ((opr1 :type (:reg :addr :int))
    (opr2 :type :reg)))
 
-(defop store ()
+(defop (store #x05)
   ""
   ((opr2 :type :reg)
    (opr1 :type (:reg :addr))))
 
 ;;; flow controlling instructions
 
-(defop ifeq ()
+(defop (ifeq #x08)
   ""
   ((cond :type :reg)
    (addr :type :addr)))
 
-(defop ifneq ()
+(defop (ifneq #x09)
   ""
   ((cond :type :reg)
    (addr :type :addr)))
 
-(defop jump ()
+(defop (jump #x0a)
   ""
   ((addr :type :addr)))
 
+;;; arithmatic instructions
 
-;;; miscellenous operations
+(defop (shl #x10)
+  ""
+  ((opr :type (:int :ref))
+   (res :type (:reg))))
 
-(defop nop ()
-  "")
+(defop (shr #x11)
+  ""
+  ((opr :type (:int :ref))
+   (res :type (:reg))))
 
-(defop hw ()
-  "Hellow SVM world!")
+(defop (add #x12)
+  ""
+  ((opr1 :type (:int :reg))
+   (opr2 :type (:int :reg))
+   (res :type :reg)))
+
+(defop (mul #x13)
+  ""
+  ((opr1 :type (:int :reg))
+   (opr2 :type (:int :reg))
+   (res :type :reg)))
+
+(defop (div #x14)
+  ""
+  ((opr1 :type (:int :reg))
+   (opr2 :type (:int :reg))
+   (res :type :reg)))
