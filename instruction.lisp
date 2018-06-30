@@ -20,7 +20,8 @@
            #:<instruction>-operands
            #:<instruction>-doc
 
-           #:+opcode-specs+))
+           #:+opcode-specs+
+           #:print-instructions))
 (in-package #:svm-ins)
 
 (defvar +types+ '(:reg :addr :byte :int)
@@ -62,7 +63,12 @@ int: signed numbers represented as 32-bit.")
            +opcode-specs+)))
 
 (defun print-instructions ()
-  +opcode-specs+)
+  (flet ((print-ins (ins)
+           (format t "; ~a (0x~2,'0x)  ~s~%    ~a~%"
+                   (<instruction>-name ins) (<instruction>-opcode ins)
+                   (<instruction>-operands ins)
+                   (<instruction>-doc ins))))
+    (mapcan #'print-ins +opcode-specs+)))
 
 
 ;;; miscellenous operations
