@@ -34,6 +34,7 @@
                 #:<program>
                 #:make-<program>
                 #:<program>-data
+                #:<program>-datamap
                 #:<program>-code)
   (:export #:construct-program))
 (in-package #:svm-as/as/program)

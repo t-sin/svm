@@ -16,6 +16,7 @@
            #:<program>
            #:make-<program>
            #:<program>-data
+           #:<program>-datamap
            #:<program>-code))
 (in-package #:svm-program)
 
@@ -26,4 +27,4 @@
   op opr1 opr2 opr3)
 
 (defstruct <program>
-  data code)
+  data datamap code)
