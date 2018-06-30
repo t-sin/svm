@@ -2,10 +2,10 @@
 (defpackage #:svm-as/as/program
   (:use #:cl)
   (:import-from #:svm-program
-                #:<constant>
-                #:make-<constant>
-                #:<constant>-type
-                #:<constant>-value
+                #:<data>
+                #:make-<data>
+                #:<data>-type
+                #:<data>-value
 
                 #:<operation>
                 #:make-<operation>
@@ -16,7 +16,7 @@
 
                 #:<program>
                 #:make-<program>
-                #:<program>-constants
+                #:<program>-data
                 #:<program>-code)
   (:export #:construct-program))
 (in-package #:svm-as/as/program)

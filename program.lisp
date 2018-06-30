@@ -1,10 +1,10 @@
 (in-package #:cl-user)
 (defpackage #:svm-program
   (:use #:cl)
-  (:export #:<constant>
-           #:make-<constant>
-           #:<constant>-type
-           #:<constant>-value
+  (:export #:<data>
+           #:make-<data>
+           #:<data>-type
+           #:<data>-value
 
            #:<operation>
            #:make-<operation>
@@ -15,15 +15,15 @@
 
            #:<program>
            #:make-<program>
-           #:<program>-constants
+           #:<program>-data
            #:<program>-code))
 (in-package #:svm-program)
 
-(defstruct <constant>
+(defstruct <data>
   type value)
 
 (defstruct <operation>
   op opr1 opr2 opr3)
 
 (defstruct <program>
-  constants code)
+  data code)
