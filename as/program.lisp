@@ -49,12 +49,12 @@
 
 (defun internal-repr (str type)
   (ecase type
-    (:reg (intern (subseq (str 1)) :keyword))
-    (:addr )
-    (:const)
-    (:str)
-    (:byte)
-    (:int)))
+    (:reg (intern (subseq str 1) :keyword))
+    (:addr (parse-integer (subseq str 1)))
+    (:const (intern (string-upcase (subseq str 1)) :keyword))
+    (:str (subseq str 1 (1- (length str))))
+    (:byte (parse-integer str))
+    (:int (parse-integer str))))
 
 (defun construct-program (ast)
   (let ((data (make-array 0 :element-type '<data>
