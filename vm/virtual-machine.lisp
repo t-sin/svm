@@ -91,6 +91,9 @@ Operand of each operation consists of *intermediate flag* (first bit) and resist
            :r6 r6
            :r7 r7))
 
+(defun load (program vm)
+  )
+
 (defun dump-vm (vm))
 
 (defun step-program (vm))
