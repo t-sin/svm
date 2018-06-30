@@ -85,7 +85,10 @@ int: signed numbers represented as 32-bit.")
 (defop (nop #x00)
   "")
 
-(defop (hw #x01)
+(defop (exit #x01)
+  "Exit program loop and shuttign down VM")
+
+(defop (hw #x02)
   "Hellow SVM world!")
 
 ;;; memory access instructions

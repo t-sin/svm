@@ -10,4 +10,4 @@
     add $r1 $r2 $r3    ; add 42 + 43
     store $r3 &400     ; store into addr (400)
     hw                 ; hello assembly world!
-
+    exit               ; exit program
