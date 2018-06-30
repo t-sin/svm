@@ -36,13 +36,17 @@ int: signed numbers represented as 32-bit.")
   name types)
 
 (defmethod print-object ((o <operand>) s)
-  (format s "<~a>" (<operand>-name o)))
+  (format s "~s" (<operand>-types o)))
 
 (defstruct <instruction>
-  name opcode operands doc)
+  name opcode operand1 operand2 operand3 doc)
 
 (defmethod print-object ((i <instruction>) s)
-  (format s "<~x:~a [~{~s~^ ~}]>" (<instruction>-opcode i) (<instruction>-name i) (<instruction>-operands i)))
+  (format s "<~x:~a ~s ~s ~s]>"
+          (<instruction>-opcode i) (<instruction>-name i)
+          (<instruction>-operand1 i)
+          (<instruction>-operand2 i)
+          (<instruction>-operand3 i)))
 
 (defparameter +opcode-specs+ nil)
 
@@ -58,13 +62,18 @@ int: signed numbers represented as 32-bit.")
   (let ((name (intern (symbol-name name) :keyword)))
     `(push (make-<instruction> :name ,name
                                :opcode ,opcode
-                               :operands (mapcar #'parse-operand ',body)
+                               ,@(loop
+                                   :for operand-def :in body
+                                   :for n :from 1 :upto (length body)
+                                   :append (list (intern (format nil "OPERAND~a" n) :keyword)
+                                                 `(parse-operand ',operand-def)))
                                :doc ,doc)
            +opcode-specs+)))
 
+
 (defun print-instructions ()
   (flet ((print-ins (ins)
-           (format t "; ~a (0x~2,'0x)  ~s~%    ~a~%"
+           (format t "; ~a (0x~2,'0x) ~s~%    ~a~%"
                    (<instruction>-name ins) (<instruction>-opcode ins)
                    (<instruction>-operands ins)
                    (<instruction>-doc ins))))
