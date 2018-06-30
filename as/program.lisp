@@ -64,9 +64,9 @@
                           :adjustable t :fill-pointer 0)))
     (flet ((push-data (name value)
              (let* ((type (get-type value))
-                    (data (make-<data> :type type
-                                       :value (internal-repr value)))
-                    (pos (vector-push-extend value data)))
+                    (dat (make-<data> :type type
+                                      :value (internal-repr value type)))
+                    (pos (vector-push-extend dat data)))
                (setf (gethash name name-pos-table) pos))))
       (loop
         :for (name value) :in (getf ast :data)
