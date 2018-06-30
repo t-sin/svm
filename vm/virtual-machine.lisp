@@ -42,15 +42,34 @@ itsself as binary instruction format.
 
 *Code* is a program run by VM. This is described at chapter below.
 
+### Data representation format
+
+Basically, single/multiple byte data are represented with its length.
+
++--------+-------+-------+------+
+| 8-bit  | 8-bit | 8-bit | ...  |
++--------+-------+-------+------+
+| length | data1 | data2 | ...  |
++--------+-------+-------+------+
+
 ### Binary instruction format
 
-+--------+--------+---------+---------+----------+
-| 6-bit  | 1-bit  | 3-bit   | 3-bit   | 3-bit    |
-+--------+--------+---------+---------+----------+
-| opcode | unused | oprand1 | oprand2 | operand3 |
-+--------+--------+---------+---------+----------+
+One operation is represented as two bytes (16 bits), and this representation is called
+the *word*. Detailed format as follows:
 
-- word length
++--------+--------+---------+---------+----------+--------+
+| 2-bit  | 6-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
++--------+--------+---------+---------+----------+--------+
+| type   | opcode | oprand1 | oprand2 | operand3 | unused |
++--------+--------+---------+---------+----------+--------+
+
+Operand of each operation consists of *intermediate flag* (first bit) and resister number.
+
++-------+----------+
+| 1-bit | 3-bit    |
++-------+----------+
+| addr? | register |
++-------+----------+
 
 "
   memory access-mem dump-mem
