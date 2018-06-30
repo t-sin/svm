@@ -1,6 +1,23 @@
 (in-package #:cl-user)
 (defpackage #:svm-as/as/program
   (:use #:cl)
+  (:import-from #:svm-ins
+                #:reg
+                #:addr
+                #:byte
+                #:int
+                #:+types+
+
+                #:<operand>
+                #:<operand>-name
+                #:<operand>-types
+
+                #:<instruction>
+                #:<instruction>-name
+                #:<instruction>-operands
+                #:<instruction>-doc
+
+                #:+opcode-specs+)
   (:import-from #:svm-program
                 #:<data>
                 #:make-<data>
@@ -21,5 +38,37 @@
   (:export #:construct-program))
 (in-package #:svm-as/as/program)
 
+(defun get-type (str)
+  (flet ((first-char= (ch) (char= (char str 0) ch))
+         (last-char= (ch) (char= (char str (1- (length str))) ch)))
+    (cond ((first-char= #\$) :reg)
+          ((first-char= #\%) :addr)
+          ((first-char= #\&) :const)
+          ((and (first-char= #\") (last-char= #\") :str))
+          (t :int))))
+
+(defun internal-repr (str type)
+  (ecase type
+    (:reg (intern (subseq (str 1)) :keyword))
+    (:addr )
+    (:const)
+    (:str)
+    (:byte)
+    (:int)))
+
 (defun construct-program (ast)
-  ast)
+  (let ((data (make-array 0 :element-type '<data>
+                          :adjustable t :fill-pointer 0))
+        (name-pos-table (make-hash-table :test 'eq))
+        (code (make-array 0 :element-type '<operation>
+                          :adjustable t :fill-pointer 0)))
+    (flet ((push-data (name value)
+             (let* ((type (get-type value))
+                    (data (make-<data> :type type
+                                       :value (internal-repr value)))
+                    (pos (vector-push-extend value data)))
+               (setf (gethash name name-pos-table) pos))))
+      (loop
+        :for (name value) :in (getf ast :data)
+        :do (push-data name value))
+      (values ast data name-pos-table code))))
