@@ -44,7 +44,8 @@ itsself as binary instruction format.
 
 ### Data representation format
 
-Basically, single/multiple byte data are represented with its length.
+Basically, single/multiple byte data are represented with its length, it means, max
+length of multiple-byte data is 255.
 
 +--------+-------+-------+------+
 | 8-bit  | 8-bit | 8-bit | ...  |
