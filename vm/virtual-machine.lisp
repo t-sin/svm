@@ -48,11 +48,20 @@ itsself as binary instruction format.
 Basically, single/multiple byte data are represented with its length, it means, max
 length of multiple-byte data is 255.
 
-+--------+-------+-------+------+
-| 8-bit  | 8-bit | 8-bit | ...  |
-+--------+-------+-------+------+
-| length | data1 | data2 | ...  |
-+--------+-------+-------+------+
++-------+------+
+| 8-bit | ...  |
++-------+------+
+| type  | data |
++-------+------+
+
+#### Types
+
+| type       | description             | data                             |
+|------------+-------------------------+----------------------------------|
+| byte       | single byte             | type, byte                       |
+| bytes      | multiple byte           | type, length, byte1, byte2, ...  |
+| UTF-8 char | character: multi-bytes  | type, byte1, byte2, byte3, byte4 |
+| UTF-8 str  | multi-char              | type, length, byte1, byte2, ...  |
 
 ### Binary instruction format
 
