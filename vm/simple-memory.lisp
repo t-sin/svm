@@ -16,11 +16,11 @@
       (aref mem addr)
       (error (format nil "~s is out of memory!!" addr))))
 
-(defsetf segment (mem addr) (byte)
-  `(if (and (<= 0 ,addr)
-            (< ,addr (length ,mem)))
-       (setf (aref ,mem ,addr) ,byte)
-       (error (format nil "~s is out of memory!!" ,addr))))
+(defun (setf segment) (byte mem addr)
+  (if (and (<= 0 addr)
+           (< addr (length mem)))
+      (setf (aref mem addr) byte)
+      (error (format nil "~s is out of memory!!" addr))))
 
 (defun dump-simple-memory (mem)
   (format nil "~s" mem))
