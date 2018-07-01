@@ -3,6 +3,7 @@
   (:use #:cl)
   (:export #:make-vm*
            #:dump-vm
+           #:load-program
            #:step-program
            #:run-program))
 (in-package #:svm-vm/vm/virtual-machine)
