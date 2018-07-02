@@ -51,12 +51,12 @@ length of multiple-byte data is 255.
 SVM processes four kind of data types: byte, byte array, characters and character strings.
 
 ```
-| type       | description             | data                             |
-|------------+-------------------------+----------------------------------|
-| byte       | single byte             | type, byte                       |
-| bytes      | multiple byte           | type, length, byte1, byte2, ...  |
-| UTF-8 char | character: multi-bytes  | type, byte1, byte2, byte3, byte4 |
-| UTF-8 str  | multi-char              | type, length, byte1, byte2, ...  |
+| type ID | type name  | description             | data                             |
+|---------|------------+-------------------------+----------------------------------|
+| 0       | byte       | single byte             | type, byte                       |
+| 1       | bytes      | multiple byte           | type, length, byte1, byte2, ...  |
+| 2       | UTF-8 char | character: multi-bytes  | type, byte1, byte2, byte3, byte4 |
+| 3       | UTF-8 str  | multi-char              | type, length, byte1, byte2, ...  |
 ```
 
 #### Binary instruction format
