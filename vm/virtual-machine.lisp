@@ -1,6 +1,9 @@
 (in-package #:cl-user)
 (defpackage #:svm-vm/vm/virtual-machine
   (:use #:cl)
+  (:import-from #:svm-program
+                #:<data>-type
+                #:<data>-value)
   (:export #:make-vm
            #:dump-vm
            #:load-program
@@ -27,6 +30,15 @@
              :r5 r5
              :r6 r6
              :r7 r7))
+
+(defun encode-data (data)
+  (let ((val (<data>-value data)))
+    (ecase (<data>-type data)
+      (:int (vector #x00 val))
+      (:byte (vector #x00 val))
+      (:bytes (vector #x01 (length val) val))
+      (:char (apply #'vector #x02 (coerce (babel:string-to-octets (string val)) 'list)))
+      (:str (apply #'vector #x03 (length val) (coerce (babel:string-to-octets val) 'list))))))
 
 (defun load-program (program vm)
   (flet ((vm-read (addr)

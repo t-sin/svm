@@ -4,5 +4,6 @@
   :version "0.1"
   :author "TANAKA Shinichi"
   :license "LLGPL"
-  :depends-on ("svm-ins"
+  :depends-on ("babel"
+               "svm-ins"
                "svm-vm/vm/package"))
