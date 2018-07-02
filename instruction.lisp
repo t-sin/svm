@@ -42,7 +42,7 @@ int: signed numbers represented as 32-bit.")
   name opcode operand1 operand2 operand3 doc)
 
 (defmethod print-object ((i <instruction>) s)
-  (format s "<~x:~a ~s ~s ~s]>"
+  (format s "<x~2,'0x:~a ~s ~s ~s]>"
           (<instruction>-opcode i) (<instruction>-name i)
           (<instruction>-operand1 i)
           (<instruction>-operand2 i)
