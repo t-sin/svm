@@ -6,14 +6,14 @@
                 #:validate-asm
                 #:construct-program)
   (:import-from #:svm-vm
-                #:make-vm*
+                #:make-vm
                 #:dump-vm
                 #:load-program
                 #:step-program
                 #:run-program)
   (:export #:read-asm
            #:construct-program
-           #:make-vm*
+           #:make-vm
            #:dump-vm
            #:load-program
            #:step-program
