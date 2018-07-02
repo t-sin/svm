@@ -17,7 +17,10 @@
            #:make-<instruction>
            #:<instruction>-p
            #:<instruction>-name
-           #:<instruction>-operands
+           #:<instruction>-opcode
+           #:<instruction>-operand1
+           #:<instruction>-operand2
+           #:<instruction>-operand3
            #:<instruction>-doc
 
            #:+opcode-specs+
