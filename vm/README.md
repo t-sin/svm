@@ -38,40 +38,48 @@ itsself as binary instruction format.
 Basically, single/multiple byte data are represented with its length, it means, max
 length of multiple-byte data is 255.
 
+```
 +-------+------+
 | 8-bit | ...  |
 +-------+------+
 | type  | data |
 +-------+------+
+```
 
 ##### Types
 
 SVM processes four kind of data types: byte, byte array, characters and character strings.
 
+```
 | type       | description             | data                             |
 |------------+-------------------------+----------------------------------|
 | byte       | single byte             | type, byte                       |
 | bytes      | multiple byte           | type, length, byte1, byte2, ...  |
 | UTF-8 char | character: multi-bytes  | type, byte1, byte2, byte3, byte4 |
 | UTF-8 str  | multi-char              | type, length, byte1, byte2, ...  |
+```
 
 #### Binary instruction format
 
 One operation is represented as two bytes (16 bits), and this representation is called
 the *word*. Detailed format as follows:
 
+```
 +--------+--------+---------+---------+----------+--------+
 | 2-bit  | 6-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
 +--------+--------+---------+---------+----------+--------+
 | type   | opcode | oprand1 | oprand2 | operand3 | unused |
 +--------+--------+---------+---------+----------+--------+
+```
 
 ##### Operands
 
 Operand of each operation consists of *intermediate flag* (first bit) and resister number.
 
+```
 +-------+----------+
 | 1-bit | 3-bit    |
 +-------+----------+
 | addr? | register |
 +-------+----------+
+```
