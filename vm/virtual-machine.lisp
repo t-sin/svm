@@ -3,7 +3,8 @@
   (:use #:cl)
   (:import-from #:svm-program
                 #:<data>-type
-                #:<data>-value)
+                #:<data>-value
+                #:<program>-data)
   (:export #:make-vm
            #:dump-vm
            #:load-program
@@ -47,7 +48,13 @@
          (vm-write (addr byte)
            (funcall (fdefinition `(setf ,(<vm>-access-mem vm)))
                     byte (<vm>-memory vm) addr)))
-    vm))
+    (let ((encoded-data (loop :named encode-data
+                           :with vec := (make-array 0 :adjustable t :fill-pointer 0)
+                           :for d :across (<program>-data program)
+                           :do (vector-push-extend (encode-data d) vec)
+                           :finally (return-from encode-data vec))))
+      (print encoded-data)
+      vm)))
 
 (defun dump-vm (vm))
 
