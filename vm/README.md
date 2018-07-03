@@ -75,6 +75,7 @@ the *word*. Detailed format as follows:
 ##### Operands
 
 Operand of each operation consists of *intermediate flag* (first bit) and resister number.
+If `addr?` is 1, the operand is representing memory address, otherwise register.
 
 ```
 +-------+----------+
