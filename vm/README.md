@@ -66,9 +66,9 @@ the *word*. Detailed format as follows:
 
 ```
 +--------+--------+---------+---------+----------+--------+
-| 2-bit  | 6-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
+| 6-bit  | 2-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
 +--------+--------+---------+---------+----------+--------+
-| type   | opcode | oprand1 | oprand2 | operand3 | unused |
+| opecde | unused | oprand1 | oprand2 | operand3 | unused |
 +--------+--------+---------+---------+----------+--------+
 ```
 
