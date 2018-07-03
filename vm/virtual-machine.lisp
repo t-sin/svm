@@ -1,10 +1,18 @@
 (in-package #:cl-user)
 (defpackage #:svm-vm/vm/virtual-machine
   (:use #:cl)
+  (:import-from #:svm-ins
+                #:<instruction>-opcode)
   (:import-from #:svm-program
                 #:<data>-type
                 #:<data>-value
-                #:<program>-data)
+                #:<operation>-op
+                #:<operation>-opr1
+                #:<operation>-opr2
+                #:<operation>-opr3
+                #:<program>-data
+                #:<program>-datamap
+                #:<program>-code)
   (:export #:make-vm
            #:dump-vm
            #:load-program
@@ -40,6 +48,41 @@
       (:char (apply #'vector #x02 (coerce (babel:string-to-octets (string val)) 'list)))
       (:str (apply #'vector #x03 (length val) (coerce (babel:string-to-octets val) 'list))))))
 
+(defun encode-operand (operand datamap encoded-data)
+  (maphash (lambda (k v) (format t "~s: ~s~%" k v)) datamap)
+  (format t "~s~%" operand)
+  (labels ((loop-offset (pos)
+             (let ((len (loop
+                          :named calculate-offset
+                          :for n :from 0 :below pos
+                          :for offset := 0
+                          :do (incf offset (length (aref encoded-data n)))
+                          :finally (return-from calculate-offset offset))))
+               (if len len 0)))
+           (calculate-offset ()
+             (let ((pos (gethash (<data>-value operand) datamap)))
+               (if pos (logand #b1000 (loop-offset pos) 0)))))
+    (ecase (<data>-type operand)
+      (:null nil)
+      (:reg (<data>-value operand))
+      (:const (calculate-offset))
+      (:int (calculate-offset))
+      (:byte (calculate-offset))
+      (:char (calculate-offset))
+      (:strr (calculate-offset))
+      (:addr (logand #b1000 (<data>-value operand))))))
+
+(defun encode-op (op datamap encoded-data)
+  (let ((opcode (<instruction>-opcode (<operation>-op op)))
+        (operand1 (<operation>-opr1 op))
+        (operand2 (<operation>-opr2 op))
+        (operand3 (<operation>-opr3 op)))
+    (coerce (append (list opcode)
+                    (loop
+                      :for opr :in (list operand1 operand2 operand3)
+                      :collect (encode-operand opr datamap encoded-data)))
+            'vector)))
+
 (defun load-program (program vm)
   (flet ((vm-read (addr)
            (funcall (fdefinition (<vm>-access-mem vm))
@@ -47,12 +90,21 @@
          (vm-write (addr byte)
            (funcall (fdefinition `(setf ,(<vm>-access-mem vm)))
                     byte (<vm>-memory vm) addr)))
-    (let ((encoded-data (loop :named encode-data
+    (let* ((encoded-data (loop
+                           :named encode-data
                            :with vec := (make-array 0 :adjustable t :fill-pointer 0)
                            :for d :across (<program>-data program)
                            :do (vector-push-extend (encode-data d) vec)
-                           :finally (return-from encode-data vec))))
+                           :finally (return-from encode-data vec)))
+           (encoded-code (let ((datamap (<program>-datamap program)))
+                           (loop
+                             :named encode-code
+                             :with vec := (make-array 0 :adjustable t :fill-pointer 0)
+                             :for op :across (<program>-code program)
+                             :do (vector-push-extend (encode-op op datamap encoded-data) vec)
+                             :finally (return-from encode-code vec)))))
       (print encoded-data)
+      (print encoded-code)
       vm)))
 
 (defun dump-vm (vm))
