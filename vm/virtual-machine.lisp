@@ -48,6 +48,12 @@
       (:char (apply #'vector #x02 (coerce (babel:string-to-octets (string val)) 'list)))
       (:str (apply #'vector #x03 (length val) (coerce (babel:string-to-octets val) 'list))))))
 
+(defun encode-register (name)
+  (let ((s (string-downcase (symbol-name name))))
+    (if (char= (char s 0) #\r)
+        (parse-integer (subseq s 1))
+        7)))
+
 (defun encode-operand (operand datamap encoded-data)
   (maphash (lambda (k v) (format t "~s: ~s~%" k v)) datamap)
   (format t "~s~%" operand)
@@ -64,7 +70,7 @@
                (if pos (logand #b1000 (loop-offset pos) 0)))))
     (ecase (<data>-type operand)
       (:null nil)
-      (:reg (<data>-value operand))
+      (:reg (encode-register (<data>-value operand)))
       (:const (calculate-offset))
       (:int (calculate-offset))
       (:byte (calculate-offset))
