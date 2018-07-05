@@ -16,8 +16,7 @@ Any things can be a memory satisfies some requirements. These requriments are be
 All data in SVM have each representation, *based on bytes*.
 
 The smallest data is a byte, but some data types are needed multiple bytes because of single
-byte is too small to express. Multiple-bytes data are coded with ordering **little endian**
--- least significant byte are placed as left, and most significant byte are placed at left.
+byte is too small to express. Multiple-bytes data are coded with ordering **big endian**.
 
 ### Program
 
