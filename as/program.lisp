@@ -46,6 +46,7 @@
           ((first-char= #\$) :reg)
           ((first-char= #\&) :addr)
           ((first-char= #\%) :const)
+          ((first-char= #\:) :label)
           ((and (first-char= #\") (last-char= #\") :str))
           (t :int))))
 
@@ -54,6 +55,7 @@
     (:null nil)
     (:reg (intern (string-upcase (subseq str 1)) :keyword))
     (:addr (parse-integer (subseq str 1)))
+    (:label (format nil "~a:" str))
     (:const (intern (string-upcase (subseq str 1)) :keyword))
     (:str (subseq str 1 (1- (length str))))
     (:byte (parse-integer str))
@@ -87,14 +89,22 @@
                      (make-<data> :type :const :value name))
                    dat))))
       (loop
-        :for (opc opr1 opr2 opr3) :in (getf ast :code)
-        :do (let* ((i (find opc +opcode-specs+ :key #'<instruction>-name))
-                   (operand1 (parse-and-push-operand opr1))
-                   (operand2 (parse-and-push-operand opr2))
-                   (operand3 (parse-and-push-operand opr3))
-                   (o (make-<operation> :op i
-                                        :opr1 operand1
-                                        :opr2 operand2
-                                        :opr3 operand3)))
-              (vector-push-extend o code))))
+        :for n :from 0 :upto (length (getf ast :code))
+        :for op :in (getf ast :code)
+        :do (format t "------ ~s -----~%" op)
+        :if (stringp op)
+        :do (let ((dat (make-<data> :type :label :value n)))
+              (vector-push-extend dat data)
+              (setf (gethash (intern (format nil "%~a%" op) :keyword) datamap) dat))
+        :else
+        :do (destructuring-bind (opc &optional opr1 opr2 opr3) op
+              (let* ((i (find opc +opcode-specs+ :key #'<instruction>-name))
+                     (operand1 (parse-and-push-operand opr1))
+                     (operand2 (parse-and-push-operand opr2))
+                     (operand3 (parse-and-push-operand opr3))
+                     (o (make-<operation> :op i
+                                          :opr1 operand1
+                                          :opr2 operand2
+                                          :opr3 operand3)))
+                (vector-push-extend o code)))))
     (make-<program> :data data :datamap datamap :code code)))
