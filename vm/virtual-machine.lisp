@@ -81,7 +81,10 @@
     (coerce (append (list opcode)
                     (loop
                       :for opr :in (list operand1 operand2 operand3)
-                      :collect (encode-operand opr datamap encoded-data)))
+                      :for encoded := (encode-operand opr datamap encoded-data)
+                      :collect (if encoded
+                                   (encode-operand opr datamap encoded-data)
+                                   0)))
             'vector)))
 
 (defun load-program (program vm)
