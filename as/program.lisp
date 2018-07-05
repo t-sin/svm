@@ -88,8 +88,6 @@
                    dat))))
       (loop
         :for (opc opr1 opr2 opr3) :in (getf ast :code)
-        :do (format t "~s: ~s ~s ~s~%" opc opr1 opr2 opr3)
-        :do (format t "  ~a ~a ~a~%" (get-type opr1) (get-type opr2) (get-type opr3))
         :do (let* ((i (find opc +opcode-specs+ :key #'<instruction>-name))
                    (operand1 (parse-and-push-operand opr1))
                    (operand2 (parse-and-push-operand opr2))
