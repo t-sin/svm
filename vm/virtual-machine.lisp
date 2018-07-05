@@ -50,24 +50,19 @@
 
 (defun encode-register (name)
   (let ((s (string-downcase (symbol-name name))))
-    (if (char= (char s 0) #\r)
-        (parse-integer (subseq s 1))
+    (or (and (char= (char s 0) #\r) (parse-integer (subseq s 1)))
         7)))
 
 (defun encode-operand (operand datamap encoded-data)
-  (maphash (lambda (k v) (format t "~s: ~s~%" k v)) datamap)
-  (format t "~s~%" operand)
-  (labels ((loop-offset (pos)
-             (let ((len (loop
-                          :named calculate-offset
-                          :for n :from 0 :below pos
-                          :for offset := 0
-                          :do (incf offset (length (aref encoded-data n)))
-                          :finally (return-from calculate-offset offset))))
-               (if len len 0)))
+  (labels ((calc-offset* (pos)
+             (loop
+               :for n :from 0 :below pos
+               :with offset := 0
+               :do (incf offset (length (aref encoded-data n)))
+               :finally (return-from calc-offset* offset)))
            (calculate-offset ()
              (let ((pos (gethash (<data>-value operand) datamap)))
-               (if pos (logand #b1000 (loop-offset pos) 0)))))
+               (if pos (logior #b1000 (calc-offset* pos) 0)))))
     (ecase (<data>-type operand)
       (:null nil)
       (:reg (encode-register (<data>-value operand)))
