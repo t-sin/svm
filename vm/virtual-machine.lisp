@@ -120,6 +120,25 @@
 
 (defun dump-vm (vm))
 
-(defun step-program (vm))
+(defun decode-op (vm)
+  (let* ((opcb (prog1
+                   (vm-read vm (<vm>-pc vm))
+                 (incf (<vm>-pc vm))))
+         (opb1 (prog1
+                   (vm-read vm (<vm>-pc vm))
+                 (incf (<vm>-pc vm))))
+         (opb2 (prog1
+                   (vm-read vm (<vm>-pc vm))
+                 (incf (<vm>-pc vm)))))
+    (let* ((opcode opcb)
+           (oprand1 (ash (logand opb1 #b11110000) -4))
+           (oprand2 (logand opb1 #b00001111))
+           (oprand3 (ash (logand opb2 #b11110000) -4)))
+      (values opcode oprand1 oprand2 oprand3))))
+
+(defun step-program (vm)
+  (multiple-value-bind (opcode operand1 operand2 operand3)
+      (fetch-op vm)
+    nil))
 
 (defun run-program (vm))
