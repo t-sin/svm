@@ -89,31 +89,33 @@
                 :for byte :across bytes
                 :do (funcall function byte)))))
 
+(defun vm-read (vm addr)
+  (funcall (fdefinition (<vm>-access-mem vm))
+           (<vm>-memory vm) addr))
+
+(defun vm-write (vm addr byte)
+  (funcall (fdefinition `(setf ,(<vm>-access-mem vm)))
+           byte (<vm>-memory vm) addr))
+
 (defun load-program (program vm)
-  (flet ((vm-read (addr)
-           (funcall (fdefinition (<vm>-access-mem vm))
-                    (<vm>-memory vm) addr))
-         (vm-write (addr byte)
-           (funcall (fdefinition `(setf ,(<vm>-access-mem vm)))
-                    byte (<vm>-memory vm) addr)))
-    (let* ((encoded-data (loop
-                           :named encode-data
+  (let* ((encoded-data (loop
+                         :named encode-data
+                         :with vec := (make-array 0 :adjustable t :fill-pointer 0)
+                         :for d :across (<program>-data program)
+                         :do (vector-push-extend (encode-data d) vec)
+                         :finally (return-from encode-data vec)))
+         (encoded-code (let ((datamap (<program>-datamap program)))
+                         (loop
+                           :named encode-code
                            :with vec := (make-array 0 :adjustable t :fill-pointer 0)
-                           :for d :across (<program>-data program)
-                           :do (vector-push-extend (encode-data d) vec)
-                           :finally (return-from encode-data vec)))
-           (encoded-code (let ((datamap (<program>-datamap program)))
-                           (loop
-                             :named encode-code
-                             :with vec := (make-array 0 :adjustable t :fill-pointer 0)
-                             :for op :across (<program>-code program)
-                             :do (vector-push-extend (encode-op op datamap encoded-data) vec)
-                             :finally (return-from encode-code vec)))))
-      (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
-        (setf (<vm>-pc vm) entry-point)
-        (let ((addr 0))
-          (flatten-walk (lambda (b) (progn (vm-write addr b) (incf addr)))
-                        encoded-data encoded-code)))))
+                           :for op :across (<program>-code program)
+                           :do (vector-push-extend (encode-op op datamap encoded-data) vec)
+                           :finally (return-from encode-code vec)))))
+    (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
+      (setf (<vm>-pc vm) entry-point)
+      (let ((addr 0))
+        (flatten-walk (lambda (b) (progn (vm-write vm addr b) (incf addr)))
+                      encoded-data encoded-code))))
   vm)
 
 (defun dump-vm (vm))
