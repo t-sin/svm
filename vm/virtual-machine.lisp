@@ -75,17 +75,19 @@
 
 (defun encode-op (op datamap encoded-data)
   (let ((opcode (<instruction>-opcode (<operation>-op op)))
-        (operand1 (<operation>-opr1 op))
-        (operand2 (<operation>-opr2 op))
-        (operand3 (<operation>-opr3 op)))
-    (coerce (append (list opcode)
-                    (loop
-                      :for opr :in (list operand1 operand2 operand3)
-                      :for encoded := (encode-operand opr datamap encoded-data)
-                      :collect (if encoded
-                                   (encode-operand opr datamap encoded-data)
-                                   0)))
-            'vector)))
+        (operand1 (or (encode-operand (<operation>-opr1 op) datamap encoded-data) 0))
+        (operand2 (or (encode-operand (<operation>-opr2 op) datamap encoded-data) 0))
+        (operand3 (or (encode-operand (<operation>-opr3 op) datamap encoded-data) 0)))
+    (vector opcode (logior (ash operand1 4) operand2) (ash operand3 4))))
+
+(defun flatten-walk (function &rest vectors)
+  (loop
+    :for encoded :in vectors
+    :do (loop
+          :for bytes :across encoded
+          :do (loop
+                :for byte :across bytes
+                :do (funcall function byte)))))
 
 (defun load-program (program vm)
   (flet ((vm-read (addr)
@@ -107,9 +109,12 @@
                              :for op :across (<program>-code program)
                              :do (vector-push-extend (encode-op op datamap encoded-data) vec)
                              :finally (return-from encode-code vec)))))
-      (print encoded-data)
-      (print encoded-code)
-      vm)))
+      (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
+        (setf (<vm>-pc vm) entry-point)
+        (let ((addr 0))
+          (flatten-walk (lambda (b) (progn (vm-write addr b) (incf addr)))
+                        encoded-data encoded-code)))))
+  vm)
 
 (defun dump-vm (vm))
 
