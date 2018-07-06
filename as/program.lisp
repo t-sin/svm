@@ -93,9 +93,9 @@
         :for op :in (getf ast :code)
         :do (format t "------ ~s -----~%" op)
         :if (stringp op)
-        :do (let ((dat (make-<data> :type :label :value n)))
-              (vector-push-extend dat data)
-              (setf (gethash (intern (format nil "~a:" op) :keyword) datamap) n))
+        :do (let* ((dat (make-<data> :type :label :value n))
+                   (pos (vector-push-extend dat data)))
+              (setf (gethash (intern (format nil "~a:" op) :keyword) datamap) pos))
         :else
         :do (destructuring-bind (opc &optional opr1 opr2 opr3) op
               (let* ((i (find opc +opcode-specs+ :key #'<instruction>-name))
