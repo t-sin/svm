@@ -55,7 +55,7 @@
     (:null nil)
     (:reg (intern (string-upcase (subseq str 1)) :keyword))
     (:addr (parse-integer (subseq str 1)))
-    (:label (format nil "~a:" str))
+    (:label (intern (format nil "~a:" str) :keyword))
     (:const (intern (string-upcase (subseq str 1)) :keyword))
     (:str (subseq str 1 (1- (length str))))
     (:byte (parse-integer str))
