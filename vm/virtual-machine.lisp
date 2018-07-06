@@ -42,6 +42,7 @@
 (defun encode-data (data)
   (let ((val (<data>-value data)))
     (ecase (<data>-type data)
+      (:label (vector #x00 (* val 3)))
       (:int (vector #x00 val))
       (:byte (vector #x00 val))
       (:bytes (vector #x01 (length val) val))
@@ -66,6 +67,7 @@
     (ecase (<data>-type operand)
       (:null nil)
       (:reg (encode-register (<data>-value operand)))
+      (:label (gethash (<data>-value operand) datamap))
       (:const (calculate-offset))
       (:int (calculate-offset))
       (:byte (calculate-offset))
@@ -78,7 +80,10 @@
         (operand1 (or (encode-operand (<operation>-opr1 op) datamap encoded-data) 0))
         (operand2 (or (encode-operand (<operation>-opr2 op) datamap encoded-data) 0))
         (operand3 (or (encode-operand (<operation>-opr3 op) datamap encoded-data) 0)))
+    (format t "~s ~s ~s ~s~%" opcode operand1 operand2 operand3)
+    (format t "    ~s~%" (logior (ash operand1 4) operand2))
     (vector opcode (logior (ash operand1 4) operand2) (ash operand3 4))))
+
 
 (defun flatten-walk (function &rest vectors)
   (loop
@@ -111,6 +116,7 @@
                            :for op :across (<program>-code program)
                            :do (vector-push-extend (encode-op op datamap encoded-data) vec)
                            :finally (return-from encode-code vec)))))
+    (print encoded-code)
     (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
       (setf (<vm>-pc vm) entry-point)
       (let ((addr 0))
