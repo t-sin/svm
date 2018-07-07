@@ -80,62 +80,64 @@
   "Exit program loop and shuttign down VM")
 
 (defop (hw #x02)
-  "Hellow SVM world!")
+  "Hello SVM world!")
 
 ;;; memory access instructions
 
 (defop (load #x04)
-  ""
+  "Load data from register or memory with address"
   ((opr1 :type (:reg :addr))
    (opr2 :type :reg)))
 
 (defop (store #x05)
-  ""
+  "Store the data held on register into register or memory"
   ((opr2 :type :reg)
    (opr1 :type (:reg :addr))))
 
 ;;; flow controlling instructions
 
-(defop (ifeq #x08)
-  ""
-  ((cond :type :reg)
-   (addr :type (:reg :addr))))
-
-(defop (ifneq #x09)
-  ""
-  ((cond :type :reg)
-   (addr :type (:reg :addr))))
-
-(defop (jump #x0a)
-  ""
+(defop (jump #x08)
+  "Set register value or address `addr` value to the program counter"
   ((addr :type (:reg :addr))))
+
+(defop (ifeq #x09)
+  "Set register value or address value to the program counter if `cond` is zero"
+  ((cond :type :reg)
+   (addr :type (:reg :addr))))
+
+(defop (ifneq #x0a)
+  "Set register value or address value to the program counter if `cond` is not zero"
+  ((cond :type :reg)
+   (addr :type (:reg :addr))))
 
 ;;; arithmatic instructions
 
 (defop (shl #x10)
-  ""
+  "Arithmetic left bit shift; shift the value `opr` with `n`, both can be stored in memory or register"
   ((opr :type :reg)
+   (n :type (:reg :addr))
    (res :type :reg)))
 
 (defop (shr #x11)
-  ""
+  "Arithmetic right bit shift; shift the value `opr` with `n`, both can be stored in memory or register"
   ((opr :type :reg)
+   (n :type (:reg :addr))
    (res :type :reg)))
 
 (defop (add #x12)
-  ""
+  "Add `opr1` to `opr2` and store register `res`, both operands can be stored in memory or register"
   ((opr1 :type :reg)
    (opr2 :type :reg)
    (res :type :reg)))
 
 (defop (mul #x13)
-  ""
+  "Multiply `opr1` with `opr2` and store register `res`, both operands can be stored in memory or register"
   ((opr1 :type :reg)
    (opr2 :type :reg)
    (res :type :reg)))
 
 (defop (div #x14)
-  ""
+  "Devide `opr1` by `opr2` and store register `res`, both operands can be stored in memory or register"
   ((opr1 :type :reg)
    (opr2 :type :reg)
    (res :type :reg)))
