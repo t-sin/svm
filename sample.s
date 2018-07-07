@@ -8,7 +8,7 @@
     load %testnum $r0  ; load from memory
     load 43 $r1        ; load from immediate
     add $r1 $r2 $r3    ; add 42 + 43
-    store $r3 &400     ; store into addr (400)
+    store $r3 &100     ; store into addr (100)
 
     load 20 $r4
     load 21 $r5
