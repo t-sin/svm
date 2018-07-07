@@ -64,7 +64,7 @@
                :finally (return-from calc-offset* offset)))
            (calculate-offset ()
              (let ((pos (gethash (<data>-value operand) datamap)))
-               (if pos (logior #b1000 (calc-offset* pos) 0)))))
+               (if pos (calc-offset* pos) 0))))
     (ecase (<data>-type operand)
       (:null nil)
       (:reg (encode-register (<data>-value operand)))
@@ -74,7 +74,7 @@
       (:byte (calculate-offset))
       (:char (calculate-offset))
       (:strr (calculate-offset))
-      (:addr (logand #b1000 (<data>-value operand))))))
+      (:addr (<data>-value operand)))))
 
 (defun encode-op (op datamap encoded-data)
   (let ((opcode (<instruction>-opcode (<operation>-op op)))
@@ -83,9 +83,7 @@
         (operand3 (or (encode-operand (<operation>-opr3 op) datamap encoded-data) 0)))
     (ecase (<instruction>-arity (<operation>-op op))
       (0 (vector opcode 0 0))
-      (1 (vector opcode
-                 (ash (logand operand1 #x0f00) -8)
-                 (logand operand1 #x0f00)))
+      (1 (vector opcode (ash operand1 4) 0))
       (2 (vector opcode operand1 operand2))
       (3 (vector opcode
                  (logior (ash operand1 4) operand2)
