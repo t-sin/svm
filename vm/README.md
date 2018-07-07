@@ -60,15 +60,15 @@ SVM processes four kind of data types: byte, byte array, characters and characte
 
 #### Binary instruction format
 
-One operation is represented as two bytes (16 bits), and this representation is called
-the *word*. Detailed format as follows:
+One operation is represented as 24 bits, and this representation is called
+the *word*. General format is as follows:
 
 ```
-+--------+--------+---------+---------+----------+--------+
-| 6-bit  | 2-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
-+--------+--------+---------+---------+----------+--------+
-| opecde | unused | oprand1 | oprand2 | operand3 | unused |
-+--------+--------+---------+---------+----------+--------+
++--------+--------+-------------+
+| 6-bit  | 2-bit  | 24-bit      |
++--------+--------+-------------+
+| opecde | unused | operands... |
++--------+--------+-------------+
 ```
 
 ##### Operands
@@ -77,9 +77,49 @@ Operand of each operation consists of *intermediate flag* (first bit) and resist
 If `addr?` is 1, the operand is representing memory address, otherwise register.
 
 ```
-+-------+----------+
-| 1-bit | 3-bit    |
-+-------+----------+
-| addr? | register |
-+-------+----------+
++-------+--------------------+
+| 1-bit | ...                |
++-------+--------------------+
+| addr? | register or adress |
++-------+--------------------+
+```
+
+##### Type 0 (nullary instructions)
+
+```
++--------+--------+--------+
+| 6-bit  | 2-bit  | 24-bit |
++--------+--------+--------+
+| opecde | unused | unused |
++--------+--------+--------+
+```
+
+
+##### Type 1 (unary instructions)
+
+```
++--------+--------+---------+---------+
+| 6-bit  | 2-bit  | 4-bit   | 12-bit  |
++--------+--------+---------+---------+
+| opecde | unused | unused  | oprand1 |
++--------+--------+---------+---------+
+```
+
+##### Type 2 (binary instructions)
+
+```
++--------+--------+---------+---------+
+| 6-bit  | 2-bit  | 8-bit   | 8-bit   |
++--------+--------+---------+---------+
+| opecde | unused | oprand1 | oprand2 |
++--------+--------+---------+---------+
+```
+
+##### Type 3 (ternary instructions)
+```
++--------+--------+---------+---------+----------+--------+
+| 6-bit  | 2-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
++--------+--------+---------+---------+----------+--------+
+| opecde | unused | oprand1 | oprand2 | operand3 | unused |
++--------+--------+---------+---------+----------+--------+
 ```
