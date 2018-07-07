@@ -77,7 +77,7 @@
       (:addr (<data>-value operand)))))
 
 (defun encode-op (op datamap encoded-data)
-  (let ((opcode (<instruction>-opcode (<operation>-op op)))
+  (let ((opcode (ash (<instruction>-opcode (<operation>-op op)) 2))
         (operand1 (or (encode-operand (<operation>-opr1 op) datamap encoded-data) 0))
         (operand2 (or (encode-operand (<operation>-opr2 op) datamap encoded-data) 0))
         (operand3 (or (encode-operand (<operation>-opr3 op) datamap encoded-data) 0)))
@@ -143,7 +143,7 @@
          (opb2 (prog1
                    (vm-read vm (<vm>-pc vm))
                  (incf (<vm>-pc vm)))))
-    (let* ((opcode opcb)
+    (let* ((opcode (ash opcb -2))
            (oprand1 (ash (logand opb1 #b11110000) -4))
            (oprand2 (logand opb1 #b00001111))
            (oprand3 (ash (logand opb2 #b11110000) -4)))
