@@ -122,7 +122,8 @@
                       encoded-data encoded-code))))
   vm)
 
-(defun dump-vm (vm))
+(defun dump-vm (vm)
+  (funcall (<vm>-dump-mem vm) vm))
 
 (defun decode-op (vm)
   (let* ((opcb (prog1
