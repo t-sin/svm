@@ -92,6 +92,8 @@
           :for bytes :across encoded
           :do (loop
                 :for byte :across bytes
+                :do (assert (<= byte #xff)
+                            (b) "Element on the memory must be a byte but ~s.")
                 :do (funcall function byte)))))
 
 (defun vm-read (vm addr)
