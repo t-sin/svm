@@ -1,5 +1,8 @@
 # String VM
 
+> I wanna die...
+> 
+> --- "I can't be a only one, baby", Space Dandy
 
 String VM is a toy virtual machine. String VM is characterised with these features:
 
