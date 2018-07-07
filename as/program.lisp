@@ -2,12 +2,6 @@
 (defpackage #:svm-as/as/program
   (:use #:cl)
   (:import-from #:svm-ins
-                #:reg
-                #:addr
-                #:byte
-                #:int
-                #:+types+
-
                 #:<operand>
                 #:<operand>-name
                 #:<operand>-types

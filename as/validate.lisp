@@ -2,12 +2,6 @@
 (defpackage #:svm-as/as/validate
   (:use #:cl)
   (:import-from #:svm-ins
-                #:reg
-                #:addr
-                #:byte
-                #:int
-                #:+types+
-
                 #:make-<operand>
                 #:<operand>-p
                 #:<operand>-name

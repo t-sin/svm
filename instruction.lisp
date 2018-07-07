@@ -1,13 +1,7 @@
 (in-package #:cl-user)
 (defpackage #:svm-ins
   (:use #:cl)
-  (:export #:reg
-           #:addr
-           #:byte
-           #:int
-           #:+types+
-
-           #:<operand>
+  (:export #:<operand>
            #:make-<operand>
            #:<operand>-p
            #:<operand>-name
@@ -27,14 +21,6 @@
            #:+opcode-specs+
            #:print-instructions))
 (in-package #:svm-ins)
-
-(defvar +types+ '(:reg :addr :byte :int)
-  "Types are available on String VM. There are several and few types are only here:
-
-reg: register numbers. this can be possible as in 0 (program counter), 1~7 (general purpus register).
-addr: memory address. this can be possible as inmmediate value as integer literal.
-byte: unsigned numbers represented as 8-bit.
-int: signed numbers represented as 32-bit.")
 
 (defstruct <operand>
   name types)
