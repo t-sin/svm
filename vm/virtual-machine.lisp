@@ -2,7 +2,8 @@
 (defpackage #:svm-vm/vm/virtual-machine
   (:use #:cl)
   (:import-from #:svm-ins
-                #:<instruction>-opcode)
+                #:<instruction>-opcode
+                #:<instruction>-arity)
   (:import-from #:svm-program
                 #:<data>-type
                 #:<data>-value
@@ -80,9 +81,15 @@
         (operand1 (or (encode-operand (<operation>-opr1 op) datamap encoded-data) 0))
         (operand2 (or (encode-operand (<operation>-opr2 op) datamap encoded-data) 0))
         (operand3 (or (encode-operand (<operation>-opr3 op) datamap encoded-data) 0)))
-    (format t "~s ~s ~s ~s~%" opcode operand1 operand2 operand3)
-    (format t "    ~s~%" (logior (ash operand1 4) operand2))
-    (vector opcode (logior (ash operand1 4) operand2) (ash operand3 4))))
+    (ecase (<instruction>-arity (<operation>-op op))
+      (0 (vector opcode 0 0))
+      (1 (vector opcode
+                 (ash (logand operand1 #x0f00) -8)
+                 (logand operand1 #x0f00)))
+      (2 (vector opcode operand1 operand2))
+      (3 (vector opcode
+                 (logior (ash operand1 4) operand2)
+                 (ash operand3 4))))))
 
 
 (defun flatten-walk (function &rest vectors)
