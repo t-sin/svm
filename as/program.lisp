@@ -85,7 +85,6 @@
       (loop
         :for n :from 0 :upto (length (getf ast :code))
         :for op :in (getf ast :code)
-        :do (format t "------ ~s -----~%" op)
         :if (stringp op)
         :do (let* ((dat (make-<data> :type :label :value n))
                    (pos (vector-push-extend dat data)))

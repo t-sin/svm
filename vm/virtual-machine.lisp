@@ -115,7 +115,6 @@
                            :for op :across (<program>-code program)
                            :do (vector-push-extend (encode-op op datamap encoded-data) vec)
                            :finally (return-from encode-code vec)))))
-    (print encoded-code)
     (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
       (setf (<vm>-pc vm) entry-point)
       (let ((addr 0))
