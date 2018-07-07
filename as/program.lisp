@@ -30,7 +30,7 @@
                 #:<program>-data
                 #:<program>-datamap
                 #:<program>-code)
-  (:export #:construct-program))
+  (:export #:make-program))
 (in-package #:svm-as/as/program)
 
 (defun get-type (str)
@@ -57,7 +57,7 @@
 
 (defparameter *name-count* 0)
 
-(defun construct-program (ast)
+(defun make-program (ast)
   (let ((data (make-array 0 :element-type '<data>
                           :adjustable t :fill-pointer 0))
         (datamap (make-hash-table :test 'eq))

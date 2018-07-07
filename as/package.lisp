@@ -6,8 +6,8 @@
   (:import-from #:svm-as/as/validate
                 #:validate-asm)
   (:import-from #:svm-as/as/program
-                #:construct-program)
+                #:make-program)
   (:export #:read-asm
            #:validate-asm
-           #:construct-program))
+           #:make-program))
 (in-package #:svm-as)

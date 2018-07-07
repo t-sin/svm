@@ -4,7 +4,7 @@
   (:import-from #:svm-as
                 #:read-asm
                 #:validate-asm
-                #:construct-program)
+                #:make-program)
   (:import-from #:svm-vm
                 #:make-vm
                 #:dump-vm
@@ -12,7 +12,7 @@
                 #:step-program
                 #:run-program)
   (:export #:read-asm
-           #:construct-program
+           #:make-program
            #:make-vm
            #:dump-vm
            #:load-program
