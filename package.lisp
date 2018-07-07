@@ -13,7 +13,7 @@
                 #:run-program)
   (:import-from #:svm-vm/vm/simple-memory
                 #:make-simple-memory
-                #:segment
+                #:access
                 #:dump-simple-memory)
   (:export #:read-asm
            #:make-program
@@ -29,7 +29,7 @@
 
 (defun make-memory* ()
   (list (make-simple-memory 1000)
-        'segment
+        'access
         #'dump-simple-memory))
 
 (defun init-vm (pathname)
