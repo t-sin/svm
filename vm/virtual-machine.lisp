@@ -153,7 +153,7 @@
 
 (defun step-program (vm)
   (multiple-value-bind (opcode operand1 operand2 operand3)
-      (fetch-op vm)
+      (decode-op vm)
     nil))
 
 (defun run-program (vm))
