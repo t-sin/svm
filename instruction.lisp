@@ -74,7 +74,7 @@
 ;;; miscellenous operations
 
 (defop (nop #x00)
-  "")
+  "Do nothing")
 
 (defop (exit #x01)
   "Exit program loop and shuttign down VM")
@@ -86,7 +86,7 @@
 
 (defop (load #x04)
   ""
-  ((opr1 :type (:reg :addr :int))
+  ((opr1 :type (:reg :addr))
    (opr2 :type :reg)))
 
 (defop (store #x05)
@@ -99,43 +99,43 @@
 (defop (ifeq #x08)
   ""
   ((cond :type :reg)
-   (addr :type :addr)))
+   (addr :type (:reg :addr))))
 
 (defop (ifneq #x09)
   ""
   ((cond :type :reg)
-   (addr :type :addr)))
+   (addr :type (:reg :addr))))
 
 (defop (jump #x0a)
   ""
-  ((addr :type :addr)))
+  ((addr :type (:reg :addr))))
 
 ;;; arithmatic instructions
 
 (defop (shl #x10)
   ""
-  ((opr :type (:int :ref))
-   (res :type (:reg))))
+  ((opr :type :reg)
+   (res :type :reg)))
 
 (defop (shr #x11)
   ""
-  ((opr :type (:int :ref))
-   (res :type (:reg))))
+  ((opr :type :reg)
+   (res :type :reg)))
 
 (defop (add #x12)
   ""
-  ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))
+  ((opr1 :type :reg)
+   (opr2 :type :reg)
    (res :type :reg)))
 
 (defop (mul #x13)
   ""
-  ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))
+  ((opr1 :type :reg)
+   (opr2 :type :reg)
    (res :type :reg)))
 
 (defop (div #x14)
   ""
-  ((opr1 :type (:int :reg))
-   (opr2 :type (:int :reg))
+  ((opr1 :type :reg)
+   (opr2 :type :reg)
    (res :type :reg)))
