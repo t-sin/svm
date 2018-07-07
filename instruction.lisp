@@ -18,6 +18,7 @@
            #:<instruction>-p
            #:<instruction>-name
            #:<instruction>-opcode
+           #:<instruction>-arity
            #:<instruction>-operand1
            #:<instruction>-operand2
            #:<instruction>-operand3
@@ -42,7 +43,7 @@ int: signed numbers represented as 32-bit.")
   (format s "~s" (<operand>-types o)))
 
 (defstruct <instruction>
-  name opcode operand1 operand2 operand3 doc)
+  name opcode arity operand1 operand2 operand3 doc)
 
 (defmethod print-object ((i <instruction>) s)
   (format s "<x~2,'0x:~a ~s ~s ~s]>"
@@ -65,6 +66,7 @@ int: signed numbers represented as 32-bit.")
   (let ((name (intern (symbol-name name) :keyword)))
     `(push (make-<instruction> :name ,name
                                :opcode ,opcode
+                               :arity ,(length body)
                                ,@(loop
                                    :for operand-def :in body
                                    :for n :from 1 :upto (length body)
