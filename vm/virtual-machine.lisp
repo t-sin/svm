@@ -2,6 +2,8 @@
 (defpackage #:svm-vm/vm/virtual-machine
   (:use #:cl)
   (:import-from #:svm-ins
+                #:+opcode-specs+
+                #:<instruction>-name
                 #:<instruction>-opcode
                 #:<instruction>-arity)
   (:import-from #:svm-program
@@ -152,6 +154,31 @@
 (defun step-program (vm)
   (multiple-value-bind (opcode operand1 operand2 operand3)
       (decode-op vm)
-    nil))
+    (let ((op (find opcode +opcode-specs+ :key #'<instruction>-opcode)))
+      (ecase (<instruction>-arity op)
+        (0 (ecase (<instruction>-name op)
+             (:nop (format t "nop!!!~%"))
+             (:exit (progn
+                      (format t "exit~%")
+                      (values nil :exit)))
+             (:hw (format t "hello world!~%"))))
+        (1 (ecase (<instruction>-name op)
+             (:jump (format t "jump ~s~%" operand1))))
+        (2 (ecase (<instruction>-name op)
+             (:load (format t "load ~s into ~s~%" operand1 operand2))
+             (:store (format t "store ~s into ~s~%" operand1 operand2))
+             (:ifeq (format t "jump ~s when (zerop ~s)~%" operand2 operand1))
+             (:ifneq (format t "jump ~s unless (zerop ~s)~%" operand2 operand1))
+             (:shl (format t "(ash ~s ~s)~%" operand1 operand2))
+             (:shr (format t "(ash ~s -~s)~%" operand1 operand2))))
+        (3 (ecase (<instruction>-name op)
+             (:add (format t "add ~s to ~s and store into ~s~%" operand1 operand2 operand3))
+             (:mul (format t "multiply ~s with ~s and store into ~s~%" operand1 operand2 operand3))
+             (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3))))))))
 
-(defun run-program (vm))
+(defun run-program (vm)
+  (loop
+    (multiple-value-bind (val status)
+        (step-program vm)
+      (when (eq status :exit)
+        (return-from run-program val)))))
