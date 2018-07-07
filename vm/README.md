@@ -71,19 +71,6 @@ the *word*. General format is as follows:
 +--------+--------+-------------+
 ```
 
-##### Operands
-
-Operand of each operation consists of *intermediate flag* (first bit) and resister number.
-If `addr?` is 1, the operand is representing memory address, otherwise register.
-
-```
-+-------+--------------------+
-| 1-bit | ...                |
-+-------+--------------------+
-| addr? | register or adress |
-+-------+--------------------+
-```
-
 ##### Type 0 (nullary instructions)
 
 ```
@@ -97,29 +84,41 @@ If `addr?` is 1, the operand is representing memory address, otherwise register.
 
 ##### Type 1 (unary instructions)
 
+Their operands can hold both on the register, on the address indicated register
+or the address immediately, which is differrent by the kind of instruction.
+
 ```
-+--------+--------+---------+---------+
-| 6-bit  | 2-bit  | 4-bit   | 12-bit  |
-+--------+--------+---------+---------+
-| opecde | unused | unused  | oprand1 |
-+--------+--------+---------+---------+
++--------+--------+----------+---------+
+| 6-bit  | 2-bit  | 8-bit    | 8-bit   |
++--------+--------+----------+---------+
+| opecde | unused | reg/addr | unudsed |
++--------+--------+----------+---------+
 ```
 
 ##### Type 2 (binary instructions)
 
+Their operands can hold both on the register, on the address indicated register
+or the address immediately, which is differrent by the kind of instruction.
+
+
 ```
-+--------+--------+---------+---------+
-| 6-bit  | 2-bit  | 8-bit   | 8-bit   |
-+--------+--------+---------+---------+
-| opecde | unused | oprand1 | oprand2 |
-+--------+--------+---------+---------+
++--------+--------+----------+----------+
+| 6-bit  | 2-bit  | 8-bit    | 8-bit    |
++--------+--------+----------+----------+
+| opecde | unused | reg/addr | reg/addr |
++--------+--------+----------+----------+
 ```
 
 ##### Type 3 (ternary instructions)
+
+Ternary instructions may be a binary operation (putting result into register).
+Their operands can hold both on the register or on the address indicated register,
+which is differrent by the kind of instruction.
+
 ```
-+--------+--------+---------+---------+----------+--------+
-| 6-bit  | 2-bit  | 4-bit   | 4-bit   | 4-bit    | 4-bit  |
-+--------+--------+---------+---------+----------+--------+
-| opecde | unused | oprand1 | oprand2 | operand3 | unused |
-+--------+--------+---------+---------+----------+--------+
++--------+--------+--------+-------+-------+-------+
+| 6-bit  | 2-bit  | 4-bit  | 4-bit | 4-bit | 4-bit |
++--------+--------+--------+-------+-------+-------+
+| opecde | unused | unused | reg1  | reg2  | reg3  |
++--------+--------+--------+-------+-------+-------+
 ```
