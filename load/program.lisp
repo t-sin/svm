@@ -1,5 +1,5 @@
 (in-package #:cl-user)
-(defpackage #:svm-as/as/program
+(defpackage #:svm-load/load/program
   (:use #:cl)
   (:import-from #:svm-ins
                 #:<operand>
@@ -31,7 +31,7 @@
                 #:<program>-datamap
                 #:<program>-code)
   (:export #:make-program))
-(in-package #:svm-as/as/program)
+(in-package #:svm-load/load/program)
 
 (defun get-type (str)
   (flet ((first-char= (ch) (char= (char str 0) ch))

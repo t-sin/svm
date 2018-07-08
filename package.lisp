@@ -3,7 +3,8 @@
   (:use #:cl)
   (:import-from #:svm-as
                 #:read-asm
-                #:validate-asm
+                #:validate-asm)
+  (:import-from #:svm-load
                 #:make-program)
   (:import-from #:svm-vm
                 #:make-vm
