@@ -87,7 +87,7 @@
       :do (let* ((dat (make-<data> :type :label :value n))
                  (pos (vector-push-extend dat datavec))
                  (name (intern (format nil "~a:" op) :keyword)))
-            (setf (gethash name jumptable) (* n 3))
+            (setf (gethash name jumptable) n)
             (setf (gethash name datamap) pos))
       :else
       :do (destructuring-bind (opc &optional opr1 opr2 opr3) op
@@ -106,7 +106,26 @@
     (flet ((has-const-or-label? (op)
              (or (member (<data>-type (<operation>-opr1 op)) addr-types)
                  (member (<data>-type (<operation>-opr2 op)) addr-types)
-                 (member (<data>-type (<operation>-opr3 op)) addr-types))))
+                 (member (<data>-type (<operation>-opr3 op)) addr-types)))
+           (calc-and-replace (operand reg newcode)
+             (when (and operand (member (<data>-type operand) addr-types))
+               (ecase (<data>-type operand)
+                 (:const (progn
+                           (setf (<data>-value operand)
+                                 (gethash (<data>-value operand) datamap))
+                           (setf (<data>-type operand) :addr)))
+                 (:label (progn
+                           (vector-push-extend
+                            (make-<operation> :op (find :load +opcode-specs+
+                                                        :key #'<instruction>-name)
+                                              :opr1 (make-<data> :type :addr
+                                                                 :value (gethash (<data>-value operand) jumptable))
+                                              :opr2 (make-<data> :type :reg
+                                                                 :value reg)
+                                              :opr3 (make-<data> :type :null))
+                            newcode)
+                           (setf (<data>-value operand) reg)
+                           (setf (<data>-type operand) :reg)))))))
       (loop
         :for n :from 0 :below (length code)
         :for op := (aref code n)
@@ -114,14 +133,9 @@
                                      :adjustable t :fill-pointer 0)
         :do (if (has-const-or-label? op)
                 (progn
-                  (let ((operand (<operation>-opr1 op)))
-                    (when (and operand (member (<data>-type operand) addr-types))
-                      (ecase (<data>-type operand)
-                        (:const (progn
-                                  (setf (<data>-value operand)
-                                        (gethash (<data>-value operand) datamap))
-                                  (setf (<data>-type operand) :addr)))
-                        (:label nil))))
+                  (calc-and-replace (<operation>-opr1 op) :r4 newcode)
+                  (calc-and-replace (<operation>-opr2 op) :r5 newcode)
+                  (calc-and-replace (<operation>-opr3 op) :r6 newcode)
                   (vector-push-extend op newcode))
                 (vector-push-extend op newcode))
         :finally (return-from calc-address newcode)))))
@@ -135,5 +149,5 @@
         (jumptable (make-hash-table :test 'eq)))
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
-    (calc-address code datamap jumptable)
-    (make-<program> :data data :datamap datamap :code code)))
+    (let ((newcode (calc-address code datamap jumptable)))
+      (make-<program> :data data :datamap datamap :code newcode :jumptable jumptable))))
