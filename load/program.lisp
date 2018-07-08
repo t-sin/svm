@@ -69,7 +69,7 @@
       :for (name value) :in (getf ast :data)
       :do (push-data name value))))
 
-(defun make-code1 (ast codevec datavec datamap jumptable)
+(defun make-code (ast datavec codevec datamap jumptable)
   (flet ((parse-and-push-operand (str)
            (let* ((type (get-type str))
                   (value (internal-repr str type))
@@ -85,8 +85,10 @@
       :for op :in (getf ast :code)
       :if (stringp op)
       :do (let* ((dat (make-<data> :type :label :value n))
-                 (pos (vector-push-extend dat datavec)))
-            (setf (gethash (intern (format nil "~a:" op) :keyword) datamap) pos))
+                 (pos (vector-push-extend dat datavec))
+                 (name (intern (format nil "~a:" op) :keyword)))
+            (setf (gethash name jumptable) (* n 3))
+            (setf (gethash name datamap) pos))
       :else
       :do (destructuring-bind (opc &optional opr1 opr2 opr3) op
             (let* ((i (find opc +opcode-specs+ :key #'<instruction>-name))
@@ -104,7 +106,8 @@
                           :adjustable t :fill-pointer 0))
         (datamap (make-hash-table :test 'eq))
         (code (make-array 0 :element-type '<operation>
-                          :adjustable t :fill-pointer 0)))
+                          :adjustable t :fill-pointer 0))
+        (jumptable (make-hash-table :test 'eq)))
     (make-data ast data datamap)
-    (make-code1 ast code data datamap nil)
+    (make-code ast data code datamap jumptable)
     (make-<program> :data data :datamap datamap :code code)))
