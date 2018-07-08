@@ -10,7 +10,6 @@
                 #:make-<instruction>
                 #:<instruction>-p
                 #:<instruction>-name
-                #:<instruction>-operands
                 #:<instruction>-doc
 
                 #:+opcode-specs+)
@@ -77,4 +76,3 @@
 (defun validate-asm (asm)
   (and (validate-data (getf asm :data))
        (validate-code (getf asm :code))))
-

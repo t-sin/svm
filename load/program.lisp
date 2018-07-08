@@ -8,7 +8,6 @@
 
                 #:<instruction>
                 #:<instruction>-name
-                #:<instruction>-operands
                 #:<instruction>-doc
 
                 #:+opcode-specs+)
