@@ -101,6 +101,31 @@
                                         :opr3 operand3)))
               (vector-push-extend o codevec))))))
 
+(defun calc-address (code datamap jumptable)
+  (let ((addr-types '(:const :label)))
+    (flet ((has-const-or-label? (op)
+             (or (member (<data>-type (<operation>-opr1 op)) addr-types)
+                 (member (<data>-type (<operation>-opr2 op)) addr-types)
+                 (member (<data>-type (<operation>-opr3 op)) addr-types))))
+      (loop
+        :for n :from 0 :below (length code)
+        :for op := (aref code n)
+        :with newcode := (make-array 0 :element-type '<operation>
+                                     :adjustable t :fill-pointer 0)
+        :do (if (has-const-or-label? op)
+                (progn
+                  (let ((operand (<operation>-opr1 op)))
+                    (when (and operand (member (<data>-type operand) addr-types))
+                      (ecase (<data>-type operand)
+                        (:const (progn
+                                  (setf (<data>-value operand)
+                                        (gethash (<data>-value operand) datamap))
+                                  (setf (<data>-type operand) :addr)))
+                        (:label nil))))
+                  (vector-push-extend op newcode))
+                (vector-push-extend op newcode))
+        :finally (return-from calc-address newcode)))))
+
 (defun make-program (ast)
   (let ((data (make-array 0 :element-type '<data>
                           :adjustable t :fill-pointer 0))
@@ -110,4 +135,5 @@
         (jumptable (make-hash-table :test 'eq)))
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
+    (calc-address code datamap jumptable)
     (make-<program> :data data :datamap datamap :code code)))
