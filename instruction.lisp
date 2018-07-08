@@ -64,9 +64,11 @@
 
 (defun print-instructions ()
   (flet ((print-ins (ins)
-           (format t "; ~a (0x~2,'0x) ~s~%    ~a~%"
+           (format t "; ~a (0x~2,'0x) ~s~%;    ~a~%"
                    (<instruction>-name ins) (<instruction>-opcode ins)
-                   (<instruction>-operands ins)
+                   (list (<instruction>-operand1 ins)
+                         (<instruction>-operand2 ins)
+                         (<instruction>-operand3 ins))
                    (<instruction>-doc ins))))
     (mapcan #'print-ins +opcode-specs+)))
 
@@ -85,14 +87,19 @@
 ;;; memory access instructions
 
 (defop (load #x04)
-  "Load data from register or memory with address"
-  ((opr1 :type (:reg :addr))
+  "Load data from memory with address"
+  ((opr1 :type :addr)
    (opr2 :type :reg)))
 
 (defop (store #x05)
-  "Store the data held on register into register or memory"
+  "Store the data held on register into  memory"
   ((opr2 :type :reg)
-   (opr1 :type (:reg :addr))))
+   (opr1 :type :addr)))
+
+(defop (move #x06)
+  "Move value from register `reg1` to register `reg2`"
+  ((reg1 :type :reg)
+   (reg2 :type :reg)))
 
 ;;; flow controlling instructions
 
