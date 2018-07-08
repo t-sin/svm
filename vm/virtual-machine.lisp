@@ -151,7 +151,7 @@
       (:shr (format t "(ash ~s -~s) and store into ~s~%" operand1 operand2 operand3))
       (:add (format t "add ~s to ~s and store into ~s~%" operand1 operand2 operand3))
       (:mul (format t "multiply ~s with ~s and store into ~s~%" operand1 operand2 operand3))
-      (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3))))))
+      (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3)))))
 
 (defun run-program (vm)
   (loop
