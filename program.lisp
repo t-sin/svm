@@ -17,7 +17,8 @@
            #:make-<program>
            #:<program>-data
            #:<program>-datamap
-           #:<program>-code))
+           #:<program>-code
+           #:<program>-jumptable))
 (in-package #:svm-program)
 
 (defstruct <data>
@@ -27,4 +28,4 @@
   op opr1 opr2 opr3)
 
 (defstruct <program>
-  data datamap code)
+  data datamap code jumptable)
