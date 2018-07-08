@@ -36,6 +36,7 @@
   (let ((val (<data>-value data)))
     (ecase (<data>-type data)
       (:label (vector #x00 (* val 3)))
+      (:addr (vector #x00 val))
       (:int (vector #x00 val))
       (:byte (vector #x00 val))
       (:bytes (vector #x01 (length val) val))
@@ -47,32 +48,17 @@
     (or (and (char= (char s 0) #\r) (parse-integer (subseq s 1)))
         7)))
 
-(defun encode-operand (operand datamap encoded-data)
-  (labels ((calc-offset* (pos)
-             (loop
-               :for n :from 0 :below pos
-               :with offset := 0
-               :do (incf offset (length (aref encoded-data n)))
-               :finally (return-from calc-offset* offset)))
-           (calculate-offset ()
-             (let ((pos (gethash (<data>-value operand) datamap)))
-               (if pos (calc-offset* pos) 0))))
-    (ecase (<data>-type operand)
-      (:null nil)
-      (:reg (encode-register (<data>-value operand)))
-      (:label (gethash (<data>-value operand) datamap))
-      (:const (calculate-offset))
-      (:int (calculate-offset))
-      (:byte (calculate-offset))
-      (:char (calculate-offset))
-      (:strr (calculate-offset))
-      (:addr (<data>-value operand)))))
+(defun encode-operand (operand)
+  (ecase (<data>-type operand)
+    (:null nil)
+    (:reg (encode-register (<data>-value operand)))
+    (:addr (<data>-value operand))))
 
 (defun encode-op (op datamap encoded-data)
   (let ((opcode (ash (<instruction>-opcode (<operation>-op op)) 2))
-        (operand1 (or (encode-operand (<operation>-opr1 op) datamap encoded-data) 0))
-        (operand2 (or (encode-operand (<operation>-opr2 op) datamap encoded-data) 0))
-        (operand3 (or (encode-operand (<operation>-opr3 op) datamap encoded-data) 0)))
+        (operand1 (or (encode-operand (<operation>-opr1 op)) 0))
+        (operand2 (or (encode-operand (<operation>-opr2 op)) 0))
+        (operand3 (or (encode-operand (<operation>-opr3 op)) 0)))
     (ecase (<instruction>-arity (<operation>-op op))
       (0 (vector opcode 0 0))
       (1 (vector opcode (ash operand1 4) 0))
@@ -80,7 +66,6 @@
       (3 (vector opcode
                  (logior (ash operand1 4) operand2)
                  (ash operand3 4))))))
-
 
 (defun flatten-walk (function &rest vectors)
   (loop
