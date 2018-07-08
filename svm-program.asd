@@ -1,6 +1,6 @@
 (defsystem #:svm-program
   :class :package-inferred-system
-  :description "String VM program"
+  :description "Space VM program"
   :version "0.1"
   :author "TANAKA Shinichi"
   :license "LLGPL"

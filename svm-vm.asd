@@ -1,6 +1,6 @@
 (defsystem #:svm-vm
   :class :package-inferred-system
-  :description "Virtual Machine for SVM"
+  :description "Virtual Machine in Space"
   :version "0.1"
   :author "TANAKA Shinichi"
   :license "LLGPL"

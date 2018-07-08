@@ -1,10 +1,10 @@
-# String VM
+# Space VM
 
 > I wanna die...
 > 
 > --- "I can't be the only one, baby", Space Dandy
 
-String VM is a toy virtual machine. String VM is characterised with these features:
+Space VM, it is a virtual machine in Space. Space VM is characterised with these features:
 
 - register based
 - codes and datum are stored in the same memory
