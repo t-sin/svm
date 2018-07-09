@@ -130,6 +130,11 @@
                    (ash (logand opb2 #xf0) -4)
                    (logand opb2 #x0f)))))))
 
+(defun decode-register (byte)
+  (cond ((or (< byte 0) (<= 8 byte)) (error "invalid register name `~s`" byte))
+        ((= byte 7) 'svm-vm/vm/virtual-machine::pc)
+        (t (intern (format nil "R~a" byte) :svm-vm/vm/virtual-machine))))
+
 (defun step-program (vm)
   (multiple-value-bind (ins operand1 operand2 operand3)
       (decode-op vm)
@@ -140,10 +145,14 @@
                (values nil :exit)))
       (:hw (format t "hello world!~%"))
 
-      (:jump (format t "jump ~s~%" operand1))
+      (:load (setf (slot-value vm (decode-register operand2))
+                   (vm-read vm operand1))
+             (format t "load ~s into ~s~%" operand1 operand2))
+      (:store (vm-write vm operand2 (slot-value vm (decode-register operand1)))
+              (format t "store ~s into ~s~%" operand1 operand2))
+      (:move (format t "move ~s to ~s~%" operand1 operand2))
 
-      (:load (format t "load ~s into ~s~%" operand1 operand2))
-      (:store (format t "store ~s into ~s~%" operand1 operand2))
+      (:jump (format t "jump ~s~%" operand1))
       (:ifeq (format t "jump ~s when (zerop ~s)~%" operand2 operand1))
       (:ifneq (format t "jump ~s unless (zerop ~s)~%" operand2 operand1))
 
@@ -153,9 +162,18 @@
       (:mul (format t "multiply ~s with ~s and store into ~s~%" operand1 operand2 operand3))
       (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3)))))
 
+(defun print-registers (vm)
+  (format t "~{~s~^ ~}~%"
+          (mapcar (lambda (b)
+                    (let ((reg (decode-register b)))
+                      (list (symbol-name reg) (slot-value vm reg))))
+                  '(7 0 1 2 3 4 5 6))))
+
 (defun run-program (vm)
+  (print-registers vm)
   (loop
     (multiple-value-bind (val status)
         (step-program vm)
+      (print-registers vm)
       (when (eq status :exit)
         (return-from run-program val)))))
