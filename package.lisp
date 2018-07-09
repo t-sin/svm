@@ -38,4 +38,4 @@
                     (make-program (read-asm in))))
          (vm (apply #'make-vm (make-memory*))))
     (load-program program vm)
-    (values program vm)))
+    (values vm program)))
