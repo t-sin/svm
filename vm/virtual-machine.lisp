@@ -54,7 +54,7 @@
     (:reg (encode-register (<data>-value operand)))
     (:addr (<data>-value operand))))
 
-(defun encode-op (op datamap encoded-data)
+(defun encode-op (op)
   (let ((opcode (ash (<instruction>-opcode (<operation>-op op)) 2))
         (operand1 (or (encode-operand (<operation>-opr1 op)) 0))
         (operand2 (or (encode-operand (<operation>-opr2 op)) 0))
@@ -87,19 +87,18 @@
            byte (<vm>-memory vm) addr))
 
 (defun load-program (program vm)
-  (let* ((encoded-data (loop
-                         :named encode-data
-                         :with vec := (make-array 0 :adjustable t :fill-pointer 0)
-                         :for d :across (<program>-data program)
-                         :do (vector-push-extend (encode-data d) vec)
-                         :finally (return-from encode-data vec)))
-         (encoded-code (let ((datamap (<program>-datamap program)))
-                         (loop
-                           :named encode-code
-                           :with vec := (make-array 0 :adjustable t :fill-pointer 0)
-                           :for op :across (<program>-code program)
-                           :do (vector-push-extend (encode-op op datamap encoded-data) vec)
-                           :finally (return-from encode-code vec)))))
+  (let ((encoded-data (loop
+                        :named encode-data
+                        :with vec := (make-array 0 :adjustable t :fill-pointer 0)
+                        :for d :across (<program>-data program)
+                        :do (vector-push-extend (encode-data d) vec)
+                        :finally (return-from encode-data vec)))
+        (encoded-code (loop
+                        :named encode-code
+                        :with vec := (make-array 0 :adjustable t :fill-pointer 0)
+                        :for op :across (<program>-code program)
+                        :do (vector-push-extend (encode-op op) vec)
+                        :finally (return-from encode-code vec))))
     (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
       (setf (<vm>-pc vm) entry-point)
       (let ((addr 0))
