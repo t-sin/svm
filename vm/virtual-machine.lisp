@@ -155,7 +155,7 @@
       (:hw (format t "hello world!~%"))
 
       (:load (format t "load ~s into ~s~%" operand1 operand2)
-             (setf (slot-value vm (decode-register operand2)) operand1))
+             (setf (slot-value vm (decode-register operand2)) (decode-data vm operand1))) ;; cannot decode data (type is 4...)
       (:store (vm-write vm operand2 (slot-value vm (decode-register operand1)))
               (format t "store ~s into ~s~%" operand1 operand2))
       (:move (format t "move ~s to ~s~%" operand1 operand2)
@@ -168,7 +168,14 @@
 
       (:shl (format t "(ash ~s ~s) and store into ~s~%" operand1 operand2 operand3))
       (:shr (format t "(ash ~s -~s) and store into ~s~%" operand1 operand2 operand3))
-      (:add (format t "add ~s to ~s and store into ~s~%" operand1 operand2 operand3))
+      (:add (format t "add ~s to ~s and store into ~s~%" operand1 operand2 operand3)
+            (print (slot-value vm (decode-register operand1)))
+            (print (slot-value vm (decode-register operand2)))
+            (print (+ (vm-read vm (slot-value vm (decode-register operand1)))
+                      (vm-read vm (slot-value vm (decode-register operand2)))))
+            (setf (slot-value vm (decode-register operand3))
+                  (+ (vm-read vm (slot-value vm (decode-register operand1)))
+                     (vm-read vm (slot-value vm (decode-register operand2))))))
       (:mul (format t "multiply ~s with ~s and store into ~s~%" operand1 operand2 operand3))
       (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3)))))
 
