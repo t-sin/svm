@@ -1,6 +1,8 @@
 (in-package #:cl-user)
 (defpackage #:svm-load/load/program
   (:use #:cl)
+  (:import-from #:babel
+                #:string-to-octets)
   (:import-from #:svm-ins
                 #:<operand>
                 #:<operand>-name
@@ -100,7 +102,22 @@
                                         :opr3 operand3)))
               (vector-push-extend o codevec))))))
 
-(defun calc-address (code datamap jumptable)
+(defun calc-data-offset (idx data)
+  (loop
+    :for n :from 0 :below idx
+    :for d := (aref data n)
+    :sum (ecase (<data>-type d)
+           (:int (+ 1 1))
+           (:byte (+ 1 1))
+           (:bytes (+ 2 (length (<data>-value d))))
+           (:char (+ 1 (length (string-to-octets (<data>-value d)))))
+           (:str (+ 2 (length (string-to-octets (<data>-value d))))))))
+
+(defun calc-code-offset (idx data)
+  (+ (calc-data-offset (1- (length data)) data)
+     (* idx 3)))
+
+(defun calc-address (data code datamap jumptable)
   (let ((addr-types '(:const :label)))
     (flet ((has-const-or-label? (op)
              (or (member (<data>-type (<operation>-opr1 op)) addr-types)
@@ -110,18 +127,20 @@
              (when (and operand (member (<data>-type operand) addr-types))
                (ecase (<data>-type operand)
                  (:const (progn
-                           (setf (<data>-value operand)
-                                 (gethash (<data>-value operand) datamap))
+                           (setf (<data>-value operand) (calc-data-offset (gethash (<data>-value operand) datamap)
+                                                                          data))
                            (setf (<data>-type operand) :addr)))
                  (:label (progn
                            (vector-push-extend
-                            (make-<operation> :op (find :load +opcode-specs+
-                                                        :key #'<instruction>-name)
-                                              :opr1 (make-<data> :type :addr
-                                                                 :value (gethash (<data>-value operand) jumptable))
-                                              :opr2 (make-<data> :type :reg
-                                                                 :value reg)
-                                              :opr3 (make-<data> :type :null))
+                            (make-<operation>
+                             :op (find :load +opcode-specs+
+                                       :key #'<instruction>-name)
+                             :opr1 (make-<data> :type :addr
+                                                :value (calc-code-offset (gethash (<data>-value operand) jumptable)
+                                                                         data))
+                             :opr2 (make-<data> :type :reg
+                                                :value reg)
+                             :opr3 (make-<data> :type :null))
                             newcode)
                            (setf (<data>-value operand) reg)
                            (setf (<data>-type operand) :reg)))))))
@@ -148,5 +167,5 @@
         (jumptable (make-hash-table :test 'eq)))
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
-    (let ((newcode (calc-address code datamap jumptable)))
+    (let ((newcode (calc-address data code datamap jumptable)))
       (make-<program> :data data :datamap datamap :code newcode :jumptable jumptable))))
