@@ -163,11 +163,12 @@
       (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3)))))
 
 (defun print-registers (vm)
-  (format t "~{~s~^ ~}~%"
-          (mapcar (lambda (b)
-                    (let ((reg (decode-register b)))
-                      (list (symbol-name reg) (slot-value vm reg))))
-                  '(7 0 1 2 3 4 5 6))))
+  (format t "; registers~%;    ")
+  (mapcan (lambda (b)
+            (let ((reg (decode-register b)))
+              (format t "~a: ~s, " (symbol-name reg) (slot-value vm reg))))
+          '(7 0 1 2 3 4 5 6))
+  (terpri))
 
 (defun run-program (vm)
   (print-registers vm)
