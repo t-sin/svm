@@ -150,7 +150,9 @@
              (format t "load ~s into ~s~%" operand1 operand2))
       (:store (vm-write vm operand2 (slot-value vm (decode-register operand1)))
               (format t "store ~s into ~s~%" operand1 operand2))
-      (:move (format t "move ~s to ~s~%" operand1 operand2))
+      (:move (setf (slot-value vm (decode-register operand2))
+                   (slot-value vm (decode-register operand1)))
+             (format t "move ~s to ~s~%" operand1 operand2))
 
       (:jump (format t "jump ~s~%" operand1))
       (:ifeq (format t "jump ~s when (zerop ~s)~%" operand2 operand1))
