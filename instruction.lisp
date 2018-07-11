@@ -105,30 +105,30 @@
 
 (defop (jump #x08)
   "Set register value or address `addr` value to the program counter"
-  ((addr :type (:reg :addr))))
+  ((addr :type :reg)))
 
 (defop (ifeq #x09)
   "Set register value or address value to the program counter if `cond` is zero"
   ((cond :type :reg)
-   (addr :type (:reg :addr))))
+   (addr :type :reg)))
 
 (defop (ifneq #x0a)
   "Set register value or address value to the program counter if `cond` is not zero"
   ((cond :type :reg)
-   (addr :type (:reg :addr))))
+   (addr :type :reg)))
 
 ;;; arithmatic instructions
 
 (defop (shl #x10)
   "Arithmetic left bit shift; shift the value `opr` with `n`, both can be stored in memory or register"
   ((opr :type :reg)
-   (n :type (:reg :addr))
+   (n :type :reg)
    (res :type :reg)))
 
 (defop (shr #x11)
   "Arithmetic right bit shift; shift the value `opr` with `n`, both can be stored in memory or register"
   ((opr :type :reg)
-   (n :type (:reg :addr))
+   (n :type :reg)
    (res :type :reg)))
 
 (defop (add #x12)
