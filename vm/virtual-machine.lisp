@@ -110,6 +110,17 @@
 (defun dump-vm (vm)
   (funcall (<vm>-dump-mem vm) vm))
 
+(defun decode-data (vm addr)
+  (let ((type (vm-read vm addr)))
+    (ecase type
+      (0 (vm-read vm (1+ addr)))  ; byte
+      (1 (let ((len (vm-read vm (1+ addr))))  ; bytes
+                (loop
+                  :for n :from (+ addr 2) :below (+ addr 2 len)
+                  :collect (vm-read vm n))))
+      (2 (error ":char is not implemented!"))  ; char
+      (3 (error ":str is not implemented!")))))  ; str
+
 (defun decode-op (vm)
   (let* ((opcb (prog1
                    (vm-read vm (<vm>-pc vm))
@@ -145,9 +156,9 @@
                (values nil :exit)))
       (:hw (format t "hello world!~%"))
 
-      (:load (setf (slot-value vm (decode-register operand2))
-                   (vm-read vm operand1))
-             (format t "load ~s into ~s~%" operand1 operand2))
+      (:load (format t "load ~s into ~s~%" operand1 operand2)
+             (setf (slot-value vm (decode-register operand2))
+                   (decode-data vm operand1)))
       (:store (vm-write vm operand2 (slot-value vm (decode-register operand1)))
               (format t "store ~s into ~s~%" operand1 operand2))
       (:move (setf (slot-value vm (decode-register operand2))
