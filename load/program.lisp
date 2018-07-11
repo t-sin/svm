@@ -126,6 +126,9 @@
            (calc-and-replace (operand reg newcode)
              (when (and operand (member (<data>-type operand) addr-types))
                (ecase (<data>-type operand)
+                 ;; たぶんここでは、具体的なメモリアドレスを計算するの美しくないきがする
+                 ;; なので、:constと:labelはそのままにして、jumptableやdatamapの値をそのまま入れるのがよさそう
+                 ;; 実際のメモリアドレスは、load-program時にする
                  (:const (progn
                            (setf (<data>-value operand) (calc-data-offset (gethash (<data>-value operand) datamap)
                                                                           data))
