@@ -162,8 +162,9 @@
                    (slot-value vm (decode-register operand1))))
 
       (:jump (format t "jump ~s~%" operand1))
-      (:ifeq (format t "jump ~s when (zerop ~s)~%" operand2 operand1))
-      (:ifneq (format t "jump ~s unless (zerop ~s)~%" operand2 operand1))
+      (:ifzero (format t "jump ~s when (zerop ~s)~%" operand2 operand1))
+      (:ifeq (format t "jump ~s when (eql ~s ~s)~%" operand1 operand2 operand3))
+      (:ifneq (format t "jump ~s unless (not (eql ~s ~s)~%" operand1 operand2 operand3))
 
       (:shl (format t "(ash ~s ~s) and store into ~s~%" operand1 operand2 operand3))
       (:shr (format t "(ash ~s -~s) and store into ~s~%" operand1 operand2 operand3))
