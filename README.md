@@ -13,16 +13,26 @@ Space VM, it is a virtual machine in Space. Space VM is characterised with these
 ## Goals
 
 - Understand programming languages
-- Run my Lisp!
+- Understand basics of computer architecture
 
 
 ## Tools
 
 - assembler (Common Lisp)
-- virtual machine (Common Lisp? C? Nim?)
+- virtual machine (Common Lisp)
 
+## Simple usage
+
+```
+$ ros run
+* (ql:quickload :svm)
+* (svm:run-program (svm:init-vm #P"sample.s"))
+```
 
 ## About VM
+
+- memory format -> see [vm/README.md](vm/README.md)
+- instructions -> see [instruction.lisp](instruction.lisp)
 
 ### Registers
 
@@ -31,30 +41,7 @@ Space VM, it is a virtual machine in Space. Space VM is characterised with these
 
 ### Data types
 
+- byte
 - bytes
-- integers
+- UTF-8 characters
 - UTF-8 character strings
-
-### Instructions
-
-#### Arithmetic instructions
-
-- `add`
-- `mul`
-- `div`
-
-#### Memory access instructions
-
-- `load`
-- `store`
-
-#### Flow controlling instructions
-
-- `ifeq`
-- `ifneq`
-- `jump`
-
-#### Miscellaneous instructions
-
-- `nop`
-- `hw`
