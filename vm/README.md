@@ -1,4 +1,4 @@
-# String Virtual Machine
+# Space Virtual Machine
 
 
 ## Memory
