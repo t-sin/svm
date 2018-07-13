@@ -109,6 +109,7 @@
     :sum (ecase (<data>-type d)
            (:int (+ 1 1))
            (:byte (+ 1 1))
+           (:label (+ 1 1))
            (:bytes (+ 2 (length (<data>-value d))))
            (:char (+ 1 (length (string-to-octets (<data>-value d)))))
            (:str (+ 2 (length (string-to-octets (<data>-value d))))))))
@@ -129,6 +130,8 @@
                  ;; たぶんここでは、具体的なメモリアドレスを計算するの美しくないきがする
                  ;; なので、:constと:labelはそのままにして、jumptableやdatamapの値をそのまま入れるのがよさそう
                  ;; 実際のメモリアドレスは、load-program時にする
+                 ;; => あきらめた ;p
+                 ;;    アセンブラの設計ミスかな
                  (:const (progn
                            (setf (<data>-value operand) (calc-data-offset (gethash (<data>-value operand) datamap)
                                                                           data))
@@ -139,7 +142,7 @@
                              :op (find :load +opcode-specs+
                                        :key #'<instruction>-name)
                              :opr1 (make-<data> :type :addr
-                                                :value (calc-code-offset (gethash (<data>-value operand) jumptable)
+                                                :value (calc-data-offset (gethash (<data>-value operand) datamap)
                                                                          data))
                              :opr2 (make-<data> :type :reg
                                                 :value reg)
