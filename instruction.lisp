@@ -107,15 +107,22 @@
   "Set register value or address `addr` value to the program counter"
   ((addr :type :reg)))
 
-(defop (ifeq #x09)
-  "Set register value or address value to the program counter if `cond` is zero"
+(defop (ifzero #x09)
+  "Set register value to the program counter if `cond` is not zero"
+  ((reg :type :reg)
+   (addr :type :reg)))
+
+(defop (ifeq #x0a)
+  "Set register value to the program counter if `reg1` is equal to `reg2`"
+  ((reg1 :type :reg)
+   (reg2 :type :reg)
+   (addr :type :reg)))
+
+(defop (ifneq #x0b)
+  "Set register value to the program counter if `reg1` is not equal to `reg2`"
   ((cond :type :reg)
    (addr :type :reg)))
 
-(defop (ifneq #x0a)
-  "Set register value or address value to the program counter if `cond` is not zero"
-  ((cond :type :reg)
-   (addr :type :reg)))
 
 ;;; arithmatic instructions
 
