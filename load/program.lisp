@@ -136,14 +136,15 @@
                            (setf (<data>-value operand) (calc-data-offset (gethash (<data>-value operand) datamap)
                                                                           data))
                            (setf (<data>-type operand) :addr)))
-                 (:label (progn
+                 (:label (let ((addr (gethash (<data>-value operand) datamap)))
+                           (setf (<data>-value (aref data addr))
+                                 (calc-code-offset (gethash (<data>-value operand) jumptable) data))
                            (vector-push-extend
                             (make-<operation>
                              :op (find :load +opcode-specs+
                                        :key #'<instruction>-name)
                              :opr1 (make-<data> :type :addr
-                                                :value (calc-data-offset (gethash (<data>-value operand) datamap)
-                                                                         data))
+                                                :value (calc-data-offset addr data))
                              :opr2 (make-<data> :type :reg
                                                 :value reg)
                              :opr3 (make-<data> :type :null))
