@@ -154,7 +154,7 @@
       (:hw (format t "hello world!~%"))
 
       (:load (format t "load ~s into ~s~%" operand1 operand2)
-             (setf (slot-value vm (decode-register operand2)) (decode-data vm operand1))) ;; cannot decode data (type is 4...)
+             (setf (slot-value vm (decode-register operand2)) (decode-data vm operand1)))
       (:store (vm-write vm operand2 (slot-value vm (decode-register operand1)))
               (format t "store ~s into ~s~%" operand1 operand2))
       (:move (format t "move ~s to ~s~%" operand1 operand2)
