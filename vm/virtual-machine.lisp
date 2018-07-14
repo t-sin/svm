@@ -175,8 +175,13 @@
       (:mul (format t "multiply ~s with ~s and store into ~s~%" operand1 operand2 operand3))
       (:div (format t "divide ~s by ~s and store into ~s~%" operand1 operand2 operand3)))))
 
-(defun print-registers (vm)
-  (format t "; registers~%;    ")
+(defparameter *print-memory* nil)
+
+(defun print-vm (vm)
+  (when *print-memory*
+    (format t ";; vm~%")
+    (format t "; mem: ~s~%" (<vm>-memory vm))
+    (format t "; reg: "))
   (mapcan (lambda (b)
             (let ((reg (decode-register b)))
               (format t "~a: ~s, " (symbol-name reg) (slot-value vm reg))))
@@ -184,10 +189,10 @@
   (terpri))
 
 (defun run-program (vm)
-  (print-registers vm)
+  (print-vm vm)
   (loop
     (multiple-value-bind (val status)
         (step-program vm)
-      (print-registers vm)
+      (print-vm vm)
       (when (eq status :exit)
         (return-from run-program val)))))
