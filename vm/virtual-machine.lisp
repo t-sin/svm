@@ -64,8 +64,8 @@
       (1 (vector opcode (ash operand1 4) 0))
       (2 (vector opcode operand1 operand2))
       (3 (vector opcode
-                 (logior (ash operand1 4) operand2)
-                 (ash operand3 4))))))
+                 (logand operand1 #x0f)
+                 (logior (ash operand2 4) operand3))))))
 
 (defun flatten-walk (function &rest vectors)
   (loop
