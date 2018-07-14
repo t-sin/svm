@@ -78,6 +78,7 @@
              (if (member type '(:byte :int :str))
                  (let ((pos (vector-push-extend dat datavec))
                        (name (intern (format nil "$name~a$" *name-count*) :keyword)))
+                   (incf *name-count*)
                    (setf (gethash name datamap) pos)
                    (make-<data> :type :const :value name))
                  dat))))
