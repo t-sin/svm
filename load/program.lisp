@@ -116,8 +116,8 @@
            (:str (+ 2 (length (string-to-octets (<data>-value d))))))))
 
 (defun calc-code-offset (idx data)
-  (+ (calc-data-offset (1- (length data)) data)
-     (* idx 3)))
+  (+ (calc-data-offset (length data) data)
+     (* (1+ idx) 3)))
 
 (defun calc-address (data code datamap jumptable)
   (let ((addr-types '(:const :label)))
