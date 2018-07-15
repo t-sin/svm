@@ -154,8 +154,9 @@
   (multiple-value-bind (ins operand1 operand2 operand3)
       (decode-op vm)
     (ecase (<instruction>-name ins)
-      (:nop nil)
-      (:exit (values nil :exit))
+      (:nop (print-op "do notiong~%"))
+      (:exit (print-op "exit.~%")
+             (values nil :exit))
       (:hw (format t "hello world!~%"))
 
       (:load (print-op "load ~s into ~s~%" operand1 operand2)
