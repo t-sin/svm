@@ -156,7 +156,7 @@
     (ecase (<instruction>-name ins)
       (:nop nil)
       (:exit (values nil :exit))
-      (:hw (print-op "hello world!~%"))
+      (:hw (format t "hello world!~%"))
 
       (:load (print-op "load ~s into ~s~%" operand1 operand2)
              (setf (slot-value vm (decode-register operand2)) (decode-data vm operand1)))
