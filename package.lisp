@@ -33,9 +33,12 @@
         'access
         #'dump-simple-memory))
 
-(defun init-vm (pathname)
-  (let* ((program (with-open-file (in pathname)
-                    (make-program (read-asm in))))
+(defun init-vm (asm)
+  (let* ((ast (etypecase asm
+                (pathname (with-open-file (in asm) (read-asm in)))
+                (string (with-open-file (in asm) (read-asm in)))
+                (stream (read-asm in))))
+         (program (make-program ast))
          (vm (apply #'make-vm (make-memory*))))
     (load-program program vm)
     (values vm program)))
