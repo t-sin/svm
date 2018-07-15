@@ -120,7 +120,8 @@
 
 (defop (ifneq #x0b)
   "Set register value to the program counter if `reg1` is not equal to `reg2`"
-  ((cond :type :reg)
+  ((reg1 :type :reg)
+   (reg2 :type :reg)
    (addr :type :reg)))
 
 
