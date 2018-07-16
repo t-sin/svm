@@ -24,6 +24,7 @@ Space VM, it is a virtual machine in Space. Space VM is characterised with these
 ## Simple usage
 
 ```
+$ ros install t-sin/svm
 $ ros run
 * (ql:quickload :svm)
 * (multiple-value-bind (vm p)
