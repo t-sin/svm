@@ -26,7 +26,13 @@ Space VM, it is a virtual machine in Space. Space VM is characterised with these
 ```
 $ ros run
 * (ql:quickload :svm)
-* (svm:run-program (svm:init-vm #P"sample.s"))
+* (multiple-value-bind (vm p)
+      (svm:init-vm #P"s/sample.s")
+    (declare (ignore p))
+    (let ((svm-vm/vm/virtual-machine::*print-op* t)
+          (svm-vm/vm/virtual-machine::*print-register* t)
+          (svm-vm/vm/virtual-machine::*print-memory* nil))
+      (svm:run-program vm)))
 ```
 
 ## About VM
