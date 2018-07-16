@@ -173,6 +173,10 @@
         (code (make-array 0 :element-type '<operation>
                           :adjustable t :fill-pointer 0))
         (jumptable (make-hash-table :test 'eq)))
+    (setf (gethash :EP datamap)
+          (vector-push-extend (make-<data> :type :byte :value 0) data))
+    (setf (gethash :EOC datamap)
+          (vector-push-extend (make-<data> :type :byte :value 0) data))
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
     (let ((newcode (calc-address data code datamap jumptable)))

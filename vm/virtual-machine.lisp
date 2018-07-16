@@ -99,7 +99,10 @@
                         :for op :across (<program>-code program)
                         :do (vector-push-extend (encode-op op) vec)
                         :finally (return-from encode-code vec))))
-    (let ((entry-point (apply #'+ (map 'list #'length encoded-data))))
+    (let ((entry-point (apply #'+ (map 'list #'length encoded-data)))
+          (code-size (apply #'+ (map 'list #'length encoded-code))))
+      (setf (aref (aref encoded-data (gethash :EP (<program>-datamap program))) 1) entry-point
+            (aref (aref encoded-data (gethash :EOC (<program>-datamap program))) 1) code-size)
       (setf (<vm>-pc vm) entry-point)
       (let ((addr 0))
         (flatten-walk (lambda (b) (progn (vm-write vm addr b) (incf addr)))
