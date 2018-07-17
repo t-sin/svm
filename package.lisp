@@ -36,7 +36,7 @@
 (defun init-vm (asm)
   (let* ((ast (etypecase asm
                 (pathname (with-open-file (in asm) (read-asm in)))
-                (string (with-open-file (in asm) (read-asm in)))
+                (string (with-input-from-string (in asm) (read-asm in)))
                 (stream (read-asm asm))))
          (program (make-program ast))
          (vm (apply #'make-vm (make-memory*))))
