@@ -32,9 +32,9 @@ $ ros run
 * (multiple-value-bind (vm p)
       (svm:init-vm #P"s/sample.s")
     (declare (ignore p))
-    (let ((svm-vm/vm/virtual-machine::*print-op* t)
-          (svm-vm/vm/virtual-machine::*print-register* t)
-          (svm-vm/vm/virtual-machine::*print-memory* nil))
+    (let ((svm-vm/vm/run::*print-op* t)
+          (svm-vm/vm/run::*print-register* t)
+          (svm-vm/vm/run::*print-memory* nil))
       (svm:run-program vm)))
 ```
 
@@ -48,9 +48,9 @@ CL-USER> (multiple-value-bind (vm p)
 hw
 exit")
            (declare (ignore p))
-           (let ((svm-vm/vm/virtual-machine::*print-op* t)
-                 (svm-vm/vm/virtual-machine::*print-register* t)
-                 (svm-vm/vm/virtual-machine::*print-memory* nil))
+           (let ((svm-vm/vm/run::*print-op* t)
+                 (svm-vm/vm/run::*print-register* t)
+                 (svm-vm/vm/run::*print-memory* nil))
              (svm:run-program vm)))
 ```
 
