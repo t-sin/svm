@@ -13,21 +13,6 @@
                 #:<instruction>-doc
 
                 #:+opcode-specs+)
-  (:import-from #:svm-program
-
-                #:<operation>
-                #:make-<operation>
-                #:<operation>-op
-                #:<operation>-opr1
-                #:<operation>-opr2
-                #:<operation>-opr3
-
-                #:<program>
-                #:make-<program>
-                #:<program>-data
-                #:<program>-datamap
-                #:<program>-code
-                #:<program>-jumptable)
   (:export #:make-program))
 (in-package #:svm-load/load/program)
 
@@ -166,4 +151,4 @@
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
     (let ((newcode (calc-address data code datamap jumptable)))
-      (make-<program> :data data :datamap datamap :code newcode :jumptable jumptable))))
+      (list :data data :datamap datamap :code newcode :jumptable jumptable))))

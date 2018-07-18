@@ -6,16 +6,6 @@
                 #:<instruction>-name
                 #:<instruction>-opcode
                 #:<instruction>-arity)
-  (:import-from #:svm-program
-                #:<data>-type
-                #:<data>-value
-                #:<operation>-op
-                #:<operation>-opr1
-                #:<operation>-opr2
-                #:<operation>-opr3
-                #:<program>-data
-                #:<program>-datamap
-                #:<program>-code)
   (:export #:make-vm
            #:dump-vm
            #:load-program
@@ -90,19 +80,19 @@
   (let ((encoded-data (loop
                         :named encode-data
                         :with vec := (make-array 0 :adjustable t :fill-pointer 0)
-                        :for d :across (<program>-data program)
+                        :for d :across (getf program :data)
                         :do (vector-push-extend (encode-data d) vec)
                         :finally (return-from encode-data vec)))
         (encoded-code (loop
                         :named encode-code
                         :with vec := (make-array 0 :adjustable t :fill-pointer 0)
-                        :for op :across (<program>-code program)
+                        :for op :across (getf program :code)
                         :do (vector-push-extend (encode-op op) vec)
                         :finally (return-from encode-code vec))))
     (let ((entry-point (apply #'+ (map 'list #'length encoded-data)))
           (code-size (apply #'+ (map 'list #'length encoded-code))))
-      (setf (aref (aref encoded-data (gethash :EP (<program>-datamap program))) 1) entry-point
-            (aref (aref encoded-data (gethash :EOC (<program>-datamap program))) 1) code-size)
+      (setf (aref (aref encoded-data (gethash :EP (getf program :datamap))) 1) entry-point
+            (aref (aref encoded-data (gethash :EOC (getf program :datamap))) 1) code-size)
       (setf (<vm>-pc vm) entry-point)
       (let ((addr 0))
         (flatten-walk (lambda (b) (progn (vm-write vm addr b) (incf addr)))
