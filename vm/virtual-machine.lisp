@@ -33,8 +33,8 @@
              :pc pc :r0 r0 :r1 r1 :r2 r2 :r3 r3 :r4 r4 :r5 r5 :r6 r6))
 
 (defun encode-data (data)
-  (let ((val (<data>-value data)))
-    (ecase (<data>-type data)
+  (let ((val (getf data :value)))
+    (ecase (getf data :type)
       (:label (vector #x00 val))
       (:addr (vector #x00 val))
       (:int (vector #x00 val))
@@ -49,10 +49,10 @@
         7)))
 
 (defun encode-operand (operand)
-  (ecase (<data>-type operand)
+  (ecase (getf operand :type)
     (:null nil)
-    (:reg (encode-register (<data>-value operand)))
-    (:addr (<data>-value operand))))
+    (:reg (encode-register (getf operand :value)))
+    (:addr (getf operand :value))))
 
 (defun encode-op (op)
   (let ((opcode (ash (<instruction>-opcode (<operation>-op op)) 2))

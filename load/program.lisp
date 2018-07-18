@@ -14,10 +14,6 @@
 
                 #:+opcode-specs+)
   (:import-from #:svm-program
-                #:<data>
-                #:make-<data>
-                #:<data>-type
-                #:<data>-value
 
                 #:<operation>
                 #:make-<operation>
@@ -62,8 +58,8 @@
 (defun make-data (ast datavec datamap)
   (flet ((push-data (name value)
            (let* ((type (get-type value))
-                  (dat (make-<data> :type type
-                                    :value (internal-repr value type)))
+                  (dat (list :kind :data :type type
+                             :value (internal-repr value type)))
                   (pos (vector-push-extend dat datavec)))
              (setf (gethash name datamap) pos))))
     (loop
@@ -74,19 +70,19 @@
   (flet ((parse-and-push-operand (str)
            (let* ((type (get-type str))
                   (value (internal-repr str type))
-                  (dat (make-<data> :type type :value value)))
+                  (dat (list :type type :value value)))
              (if (member type '(:byte :int :str))
                  (let ((pos (vector-push-extend dat datavec))
                        (name (intern (format nil "$name~a$" *name-count*) :keyword)))
                    (incf *name-count*)
                    (setf (gethash name datamap) pos)
-                   (make-<data> :type :const :value name))
+                   (list :type :const :value name))
                  dat))))
     (loop
       :for n :from 0 :upto (length (getf ast :code))
       :for op :in (getf ast :code)
       :if (stringp op)
-      :do (let* ((dat (make-<data> :type :label :value n))
+      :do (let* ((dat (list :type :label :value n))
                  (pos (vector-push-extend dat datavec))
                  (name (intern (format nil "~a:" op) :keyword)))
             (setf (gethash name jumptable) n)
@@ -107,13 +103,13 @@
   (loop
     :for n :from 0 :below idx
     :for d := (aref data n)
-    :sum (ecase (<data>-type d)
+    :sum (ecase (getf d :type)
            (:int (+ 1 1))
            (:byte (+ 1 1))
            (:label (+ 1 1))
-           (:bytes (+ 2 (length (<data>-value d))))
-           (:char (+ 1 (length (string-to-octets (<data>-value d)))))
-           (:str (+ 2 (length (string-to-octets (<data>-value d))))))))
+           (:bytes (+ 2 (length (getf d :value))))
+           (:char (+ 1 (length (string-to-octets (getf d :value)))))
+           (:str (+ 2 (length (string-to-octets (getf d :value))))))))
 
 (defun calc-code-offset (idx data)
   (+ (calc-data-offset (length data) data)
@@ -122,36 +118,34 @@
 (defun calc-address (data code datamap jumptable)
   (let ((addr-types '(:const :label)))
     (flet ((has-const-or-label? (op)
-             (or (member (<data>-type (<operation>-opr1 op)) addr-types)
-                 (member (<data>-type (<operation>-opr2 op)) addr-types)
-                 (member (<data>-type (<operation>-opr3 op)) addr-types)))
+             (or (member (getf (<operation>-opr1 op) :type) addr-types)
+                 (member (getf (<operation>-opr2 op) :type) addr-types)
+                 (member (getf (<operation>-opr3 op) :type) addr-types)))
            (calc-and-replace (operand reg newcode)
-             (when (and operand (member (<data>-type operand) addr-types))
-               (ecase (<data>-type operand)
+             (when (and operand (member (getf operand :type) addr-types))
+               (ecase (getf operand :type)
                  ;; たぶんここでは、具体的なメモリアドレスを計算するの美しくないきがする
                  ;; なので、:constと:labelはそのままにして、jumptableやdatamapの値をそのまま入れるのがよさそう
                  ;; 実際のメモリアドレスは、load-program時にする
                  ;; => あきらめた ;p
                  ;;    アセンブラの設計ミスかな
                  (:const (progn
-                           (setf (<data>-value operand) (calc-data-offset (gethash (<data>-value operand) datamap)
+                           (setf (getf operand :value) (calc-data-offset (gethash (getf operand :value) datamap)
                                                                           data))
-                           (setf (<data>-type operand) :addr)))
-                 (:label (let ((addr (gethash (<data>-value operand) datamap)))
-                           (setf (<data>-value (aref data addr))
-                                 (calc-code-offset (gethash (<data>-value operand) jumptable) data))
+                           (setf (getf operand :type) :addr)))
+                 (:label (let ((addr (gethash (getf operand :value) datamap)))
+                           (setf (getf (aref data addr) :value)
+                                 (calc-code-offset (gethash (getf operand :value) jumptable) data))
                            (vector-push-extend
                             (make-<operation>
                              :op (find :load +opcode-specs+
                                        :key #'<instruction>-name)
-                             :opr1 (make-<data> :type :addr
-                                                :value (calc-data-offset addr data))
-                             :opr2 (make-<data> :type :reg
-                                                :value reg)
-                             :opr3 (make-<data> :type :null))
+                             :opr1 (list :type :addr :value (calc-data-offset addr data))
+                             :opr2 (list :type :reg :value reg)
+                             :opr3 (list :type :null))
                             newcode)
-                           (setf (<data>-value operand) reg)
-                           (setf (<data>-type operand) :reg)))))))
+                           (setf (getf operand :value) reg)
+                           (setf (getf operand :type) :reg)))))))
       (loop
         :for n :from 0 :below (length code)
         :for op := (aref code n)
@@ -167,16 +161,14 @@
         :finally (return-from calc-address newcode)))))
 
 (defun make-program (ast)
-  (let ((data (make-array 0 :element-type '<data>
-                          :adjustable t :fill-pointer 0))
+  (let ((data (make-array 0 :adjustable t :fill-pointer 0))
         (datamap (make-hash-table :test 'eq))
-        (code (make-array 0 :element-type '<operation>
-                          :adjustable t :fill-pointer 0))
+        (code (make-array 0 :adjustable t :fill-pointer 0))
         (jumptable (make-hash-table :test 'eq)))
     (setf (gethash :EP datamap)
-          (vector-push-extend (make-<data> :type :byte :value 0) data))
+          (vector-push-extend (list :type :byte :value 0) data))
     (setf (gethash :EOC datamap)
-          (vector-push-extend (make-<data> :type :byte :value 0) data))
+          (vector-push-extend (list :type :byte :value 0) data))
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
     (let ((newcode (calc-address data code datamap jumptable)))
