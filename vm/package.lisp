@@ -1,8 +1,9 @@
 (in-package #:cl-user)
 (defpackage #:svm-vm
   (:use #:cl)
+  (:import-from #:svm-vm/vm
+                #:make-vm)
   (:import-from #:svm-vm/vm/virtual-machine
-                #:make-vm
                 #:dump-vm
                 #:load-program
                 #:step-program

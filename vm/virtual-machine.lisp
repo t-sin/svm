@@ -6,21 +6,18 @@
                 #:<instruction>-name
                 #:<instruction>-opcode
                 #:<instruction>-arity)
+  (:import-from #:svm-vm/vm
+                #:<vm>-dump-mem
+                #:<vm>-memory
+                #:<vm>-pc
+                #:vm-read
+                #:vm-write)
   (:export #:make-vm
            #:dump-vm
            #:load-program
            #:step-program
            #:run-program))
 (in-package #:svm-vm/vm/virtual-machine)
-
-(defstruct <vm>
-  memory access-mem dump-mem
-  pc r0 r1 r2 r3 r4 r5 r6)
-
-(defun make-vm (memory mem-accessor mem-dumper
-                &optional (pc 0) (r0 0) (r1 0) (r2 0) (r3 0) (r4 0) (r5 0) (r6 0))
-  (make-<vm> :memory memory :access-mem mem-accessor :dump-mem mem-dumper
-             :pc pc :r0 r0 :r1 r1 :r2 r2 :r3 r3 :r4 r4 :r5 r5 :r6 r6))
 
 (defun encode-data (data)
   (let ((val (getf data :value)))
@@ -67,14 +64,6 @@
                 :do (assert (<= byte #xff)
                             (byte) "Element on the memory must be a byte but ~s." byte)
                 :do (funcall function byte)))))
-
-(defun vm-read (vm addr)
-  (funcall (fdefinition (<vm>-access-mem vm))
-           (<vm>-memory vm) addr))
-
-(defun vm-write (vm addr byte)
-  (funcall (fdefinition `(setf ,(<vm>-access-mem vm)))
-           byte (<vm>-memory vm) addr))
 
 (defun load-program (program vm)
   (let ((encoded-data (loop
@@ -136,7 +125,7 @@
 (defun decode-register (byte)
   (cond ((or (< byte 0) (<= 8 byte)) (error "invalid register name `~s`" byte))
         ((= byte 7) 'svm-vm/vm/virtual-machine::pc)
-        (t (intern (format nil "R~a" byte) :svm-vm/vm/virtual-machine))))
+        (t (intern (format nil "R~a" byte) :svm-vm/vm))))
 
 (defparameter *print-op* nil)
 (defun print-op (target &rest args)
