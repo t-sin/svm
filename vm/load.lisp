@@ -7,8 +7,6 @@
                 #:<instruction>-opcode
                 #:<instruction>-arity)
   (:import-from #:svm-vm/vm
-                #:<vm>-dump-mem
-                #:<vm>-memory
                 #:<vm>-pc
                 #:vm-read
                 #:vm-write)
