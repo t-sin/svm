@@ -1,5 +1,5 @@
 (in-package #:cl-user)
-(defpackage #:svm-vm/vm/virtual-machine
+(defpackage #:svm-vm/vm/run
   (:use #:cl)
   (:import-from #:svm-ins
                 #:+opcode-specs+
@@ -15,7 +15,7 @@
   (:export #:dump-vm
            #:step-program
            #:run-program))
-(in-package #:svm-vm/vm/virtual-machine)
+(in-package #:svm-vm/vm/run)
 
 (defun dump-vm (vm)
   (funcall (<vm>-dump-mem vm) vm))
@@ -53,7 +53,7 @@
 
 (defun decode-register (byte)
   (cond ((or (< byte 0) (<= 8 byte)) (error "invalid register name `~s`" byte))
-        ((= byte 7) 'svm-vm/vm/virtual-machine::pc)
+        ((= byte 7) 'svm-vm/vm::pc)
         (t (intern (format nil "R~a" byte) :svm-vm/vm))))
 
 (defparameter *print-op* nil)

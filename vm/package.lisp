@@ -5,7 +5,7 @@
                 #:make-vm)
   (:import-from #:svm-vm/vm/load
                 #:load-program)
-  (:import-from #:svm-vm/vm/virtual-machine
+  (:import-from #:svm-vm/vm/run
                 #:dump-vm
                 #:step-program
                 #:run-program)
