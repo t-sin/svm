@@ -3,9 +3,10 @@
   (:use #:cl)
   (:import-from #:svm-vm/vm
                 #:make-vm)
+  (:import-from #:svm-vm/vm/load
+                #:load-program)
   (:import-from #:svm-vm/vm/virtual-machine
                 #:dump-vm
-                #:load-program
                 #:step-program
                 #:run-program)
   (:export #:make-vm
