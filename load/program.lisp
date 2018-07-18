@@ -93,10 +93,7 @@
                    (operand1 (parse-and-push-operand opr1))
                    (operand2 (parse-and-push-operand opr2))
                    (operand3 (parse-and-push-operand opr3))
-                   (o (make-<operation> :op i
-                                        :opr1 operand1
-                                        :opr2 operand2
-                                        :opr3 operand3)))
+                   (o (list :op i :opr1 operand1 :opr2 operand2 :opr3 operand3)))
               (vector-push-extend o codevec))))))
 
 (defun calc-data-offset (idx data)
@@ -118,9 +115,9 @@
 (defun calc-address (data code datamap jumptable)
   (let ((addr-types '(:const :label)))
     (flet ((has-const-or-label? (op)
-             (or (member (getf (<operation>-opr1 op) :type) addr-types)
-                 (member (getf (<operation>-opr2 op) :type) addr-types)
-                 (member (getf (<operation>-opr3 op) :type) addr-types)))
+             (or (member (getf (getf op :opr1) :type) addr-types)
+                 (member (getf (getf op :opr2) :type) addr-types)
+                 (member (getf (getf op :opr3) :type) addr-types)))
            (calc-and-replace (operand reg newcode)
              (when (and operand (member (getf operand :type) addr-types))
                (ecase (getf operand :type)
@@ -137,25 +134,22 @@
                            (setf (getf (aref data addr) :value)
                                  (calc-code-offset (gethash (getf operand :value) jumptable) data))
                            (vector-push-extend
-                            (make-<operation>
-                             :op (find :load +opcode-specs+
-                                       :key #'<instruction>-name)
-                             :opr1 (list :type :addr :value (calc-data-offset addr data))
-                             :opr2 (list :type :reg :value reg)
-                             :opr3 (list :type :null))
+                            (list :op (find :load +opcode-specs+ :key #'<instruction>-name)
+                                  :opr1 (list :type :addr :value (calc-data-offset addr data))
+                                  :opr2 (list :type :reg :value reg)
+                                  :opr3 (list :type :null))
                             newcode)
                            (setf (getf operand :value) reg)
                            (setf (getf operand :type) :reg)))))))
       (loop
         :for n :from 0 :below (length code)
         :for op := (aref code n)
-        :with newcode := (make-array 0 :element-type '<operation>
-                                     :adjustable t :fill-pointer 0)
+        :with newcode := (make-array 0 :adjustable t :fill-pointer 0)
         :do (if (has-const-or-label? op)
                 (progn
-                  (calc-and-replace (<operation>-opr1 op) :r4 newcode)
-                  (calc-and-replace (<operation>-opr2 op) :r5 newcode)
-                  (calc-and-replace (<operation>-opr3 op) :r6 newcode)
+                  (calc-and-replace (getf op :opr1) :r4 newcode)
+                  (calc-and-replace (getf op :opr2) :r5 newcode)
+                  (calc-and-replace (getf op :opr3) :r6 newcode)
                   (vector-push-extend op newcode))
                 (vector-push-extend op newcode))
         :finally (return-from calc-address newcode)))))
