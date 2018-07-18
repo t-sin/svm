@@ -5,5 +5,4 @@
   :author "TANAKA Shinichi"
   :license "LLGPL"
   :depends-on ("svm-ins"
-               "svm-program"
                "svm-ir/ir/package"))
