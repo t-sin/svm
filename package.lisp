@@ -4,8 +4,8 @@
   (:import-from #:svm-as
                 #:read-asm
                 #:validate-asm)
-  (:import-from #:svm-load
-                #:make-program)
+  (:import-from #:svm-ir
+                #:make-ir)
   (:import-from #:svm-vm
                 #:make-vm
                 #:dump-vm
@@ -17,7 +17,7 @@
                 #:access
                 #:dump-simple-memory)
   (:export #:read-asm
-           #:make-program
+           #:make-ir
            #:make-vm
            #:dump-vm
            #:load-program
@@ -38,7 +38,7 @@
                 (pathname (with-open-file (in asm) (read-asm in)))
                 (string (with-input-from-string (in asm) (read-asm in)))
                 (stream (read-asm asm))))
-         (program (make-program ast))
+         (program (make-ir ast))
          (vm (apply #'make-vm (make-memory*))))
     (load-program program vm)
     (values vm program)))

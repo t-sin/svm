@@ -1,9 +1,9 @@
-(defsystem #:svm-load
+(defsystem #:svm-ir
   :class :package-inferred-system
-  :description "Space VM program loader"
+  :description "Internal representation for Space VM program"
   :version "0.1"
   :author "TANAKA Shinichi"
   :license "LLGPL"
   :depends-on ("svm-ins"
                "svm-program"
-               "svm-as/load/package"))
+               "svm-ir/ir/package"))

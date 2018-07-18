@@ -1,5 +1,5 @@
 (in-package #:cl-user)
-(defpackage #:svm-load/load/program
+(defpackage #:svm-ir/ir/ir
   (:use #:cl)
   (:import-from #:babel
                 #:string-to-octets)
@@ -13,8 +13,8 @@
                 #:<instruction>-doc
 
                 #:+opcode-specs+)
-  (:export #:make-program))
-(in-package #:svm-load/load/program)
+  (:export #:make-ir))
+(in-package #:svm-ir/ir/ir)
 
 (defun get-type (str)
   (flet ((first-char= (ch) (char= (char str 0) ch))
@@ -139,7 +139,7 @@
                 (vector-push-extend op newcode))
         :finally (return-from calc-address newcode)))))
 
-(defun make-program (ast)
+(defun make-ir (ast)
   (let ((data (make-array 0 :adjustable t :fill-pointer 0))
         (datamap (make-hash-table :test 'eq))
         (code (make-array 0 :adjustable t :fill-pointer 0))
