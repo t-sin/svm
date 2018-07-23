@@ -78,7 +78,9 @@
              (setf (slot-value vm (decode-register operand2))
                    (slot-value vm (decode-register operand1))))
 
-      (:jump (print-op "jump ~s~%" operand1))
+      (:jump (setf (slot-value vm (decode-register 7))
+                   (slot-value vm (decode-register operand1)))
+             (print-op "jump ~s~%" operand1))
       (:ifzero (when (zerop (slot-value vm (decode-register operand1)))
                  (setf (slot-value vm (decode-register 7))
                        (slot-value vm (decode-register operand2))))
