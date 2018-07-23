@@ -42,7 +42,7 @@
         (operand3 (or (encode-operand (getf op :opr3)) 0)))
     (ecase (<instruction>-arity (getf op :op))
       (0 (vector opcode 0 0))
-      (1 (vector opcode (ash operand1 4) 0))
+      (1 (vector opcode operand1 0))
       (2 (vector opcode operand1 operand2))
       (3 (vector opcode
                  (logand operand1 #x0f)
