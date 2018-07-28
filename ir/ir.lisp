@@ -104,4 +104,4 @@
           (vector-push-extend (list :type :byte :value 0) data))
     (make-data ast data datamap)
     (make-code ast data code datamap jumptable)
-    (list :data data :datamap datamap :code code :jumptable jumptable)))
+    (list :data data :datamap datamap :datamap2 nil :code code :jumptable jumptable)))
