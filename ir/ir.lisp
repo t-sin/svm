@@ -66,14 +66,14 @@
                      ((eq type :label)
                       (let ((pos (vector-push-extend
                                   (list :op (find :load +opcode-specs+ :key #'<instruction>-name)
-                                        :opr1 (list :type :addr :value value)
+                                        :opr1 (list :type :label :value value)
                                         :opr2 (list :type :reg
                                                     :value (intern (format nil "R~a" (+ oprnum 3)) :keyword))
                                         :opr3 (list :type :null))
                                   codevec)))
                         (incf n)
                         (setf (gethash value datamap) pos)
-                        (print value)))
+                        (list :type :label :value value)))
                      (t dat)))))
       (loop
         :for op :in (getf ast :code)
@@ -91,8 +91,7 @@
                      (operand3 (parse-operand opr3 3))
                      (o (list :op i :opr1 operand1 :opr2 operand2 :opr3 operand3)))
                 (vector-push-extend o codevec))
-              (incf n)))
-      (print n))))
+              (incf n))))))
 
 (defun make-ir (ast)
   (let ((data (make-array 0 :adjustable t :fill-pointer 0))
