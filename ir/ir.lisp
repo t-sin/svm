@@ -53,7 +53,7 @@
 
 (defun make-code (ast datavec codevec datamap jumptable)
   (let ((n 0))
-    (flet ((parse-operand (str oprnum)
+    (flet ((parse-operand (str)
              (let* ((type (get-type str))
                     (value (internal-repr str type))
                     (dat (list :type type :value value)))
@@ -68,7 +68,7 @@
                                   (list :op (find :load +opcode-specs+ :key #'<instruction>-name)
                                         :opr1 (list :type :label :value value)
                                         :opr2 (list :type :reg
-                                                    :value (intern (format nil "R~a" (+ oprnum 3)) :keyword))
+                                                    :value (intern (format nil "R~a" 6) :keyword))
                                         :opr3 (list :type :null))
                                   codevec)))
                         (incf n)
@@ -86,9 +86,9 @@
         :else
         :do (destructuring-bind (opc &optional opr1 opr2 opr3) op
               (let* ((i (find opc +opcode-specs+ :key #'<instruction>-name))
-                     (operand1 (parse-operand opr1 1))
-                     (operand2 (parse-operand opr2 2))
-                     (operand3 (parse-operand opr3 3))
+                     (operand1 (parse-operand opr1))
+                     (operand2 (parse-operand opr2))
+                     (operand3 (parse-operand opr3))
                      (o (list :op i :opr1 operand1 :opr2 operand2 :opr3 operand3)))
                 (vector-push-extend o codevec))
               (incf n))))))
