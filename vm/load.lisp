@@ -97,8 +97,6 @@
       :do (vector-push-extend (encode-op op program) encoded-code))
     (setf code-size(apply #'+ (map 'list #'length encoded-code)))
 
-      (format t "ep: ~a, csize: ~a~%" entry-point code-size)
-      (print encoded-data)
       (loop
         :for k :being :each :hash-keys :of (getf program :datamap) :using (hash-value v)
         :when (let ((name (symbol-name k)))
@@ -106,7 +104,6 @@
                      (char= (char name (1- (length name))) #\:)))
         :do (let ((addr (aref (aref encoded-data v) 1)))
               (setf (aref (aref encoded-data v) 1) (+ entry-point (* 3 addr)))))
-      (print encoded-data)
 
       (setf (aref (aref encoded-data (gethash :EP (getf program :datamap))) 1) entry-point
             (aref (aref encoded-data (gethash :EOC (getf program :datamap))) 1) code-size)
