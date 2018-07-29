@@ -20,6 +20,44 @@
 (defun dump-vm (vm)
   (funcall (<vm>-dump-mem vm) vm))
 
+
+;;; this functions must be replaced with `oji`
+;;; https://github.com/t-sin/oji
+(defun charseq-length (byte)
+  "Calcutates length of UTF-8 octet sequence from start-byte `byte`."
+  (let ((b (logand #b11110000 byte)))
+    (loop
+       :for bit := #b10000000 :then (ash bit -1)
+       :with count := 0
+       :while (and (>= bit #b00010000) (not (zerop (logand bit b))))
+       :do (incf count)
+       :finally (return-from charseq-length count))))
+
+;;; Also this functions must be replaced with `oji`
+;;; https://github.com/t-sin/oji
+(defun decode-codepoint (bytes)
+  "Decodes `bytes` into a codepoint."
+  (case (length bytes)
+    (1 (logand #b01111111 (aref bytes 0)))
+    (2 (logior (ash (logand #b00011111 (aref bytes 0)) 6)
+               (logand #b00111111 (aref bytes 1))))
+    (3 (logior (ash (logand #b00001111 (aref bytes 0)) 12)
+               (ash (logand #b00111111 (aref bytes 1)) 6)
+               (logand #b00111111 (aref bytes 2))))
+    (4 (logior (ash (logand #b00000111 (aref bytes 0)) 18)
+               (ash (logand #b00111111 (aref bytes 1)) 12)
+               (ash (logand #b00111111 (aref bytes 2)) 6)
+               (logand #b00111111 (aref bytes 3))))
+    (t (error (format nil "invalid UTF-8 byte sequence: ~s" bytes)))))
+
+(defun decode-char (vm at)
+  (let* ((1st (vm-read vm at))
+         (len (charseq-length 1st))
+         (all (loop
+                :for addr :from (1+ at) :below (+ at len)
+                :collect (vm-read vm addr))))
+    (code-char (decode-codepoint (apply #'vector 1st all)))))
+
 (defun decode-data (vm addr)
   (let ((type (vm-read vm addr)))
     (ecase type
