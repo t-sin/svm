@@ -41,23 +41,21 @@
            (:char (+ 1 (length (babel:string-to-octets (getf d :value)))))
            (:str (+ 2 (length (babel:string-to-octets (getf d :value))))))))
 
-(defun encode-operand (operand op program ep)
+(defun encode-operand (operand op program)
   (ecase (getf operand :type)
     (:null nil)
     (:const (gethash (getf operand :value) (getf program :datamap2)))
     (:label (if (eq (<instruction>-name (getf op :op)) :load)
                 (gethash (getf operand :value) (getf program :datamap2))
-                (+ ep (* 3 (getf (aref (getf program :data)
-                                       (gethash (getf operand :value) (getf program :datamap)))
-                                 :value)))))
+                (encode-register :r6)))
     (:reg (encode-register (getf operand :value)))
     (:addr (getf operand :value))))
 
-(defun encode-op (op program ep)
+(defun encode-op (op program)
   (let ((opcode (ash (<instruction>-opcode (getf op :op)) 2))
-        (operand1 (or (encode-operand (getf op :opr1) op program ep) 0))
-        (operand2 (or (encode-operand (getf op :opr2) op program ep) 0))
-        (operand3 (or (encode-operand (getf op :opr3) op program ep) 0)))
+        (operand1 (or (encode-operand (getf op :opr1) op program) 0))
+        (operand2 (or (encode-operand (getf op :opr2) op program) 0))
+        (operand3 (or (encode-operand (getf op :opr3) op program) 0)))
     (ecase (<instruction>-arity (getf op :op))
       (0 (vector opcode 0 0))
       (1 (vector opcode operand1 0))
@@ -96,7 +94,7 @@
 
     (loop
       :for op :across (getf program :code)
-      :do (vector-push-extend (encode-op op program entry-point) encoded-code))
+      :do (vector-push-extend (encode-op op program) encoded-code))
     (setf code-size(apply #'+ (map 'list #'length encoded-code)))
 
       (format t "ep: ~a, csize: ~a~%" entry-point code-size)
