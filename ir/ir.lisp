@@ -24,6 +24,7 @@
           ((first-char= #\&) :addr)
           ((first-char= #\%) :const)
           ((first-char= #\:) :label)
+          ((first-char= #\\) :char)
           ((and (first-char= #\") (last-char= #\") :str))
           (t :int))))
 
@@ -34,6 +35,7 @@
     (:addr (parse-integer (subseq str 1)))
     (:label (intern (format nil "~a:" str) :keyword))
     (:const (intern (string-upcase (subseq str 1)) :keyword))
+    (:char (char str 1))
     (:str (subseq str 1 (1- (length str))))
     (:byte (parse-integer str))
     (:int (parse-integer str))))
