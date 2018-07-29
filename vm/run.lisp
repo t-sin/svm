@@ -66,7 +66,7 @@
                 (loop
                   :for n :from (+ addr 2) :below (+ addr 2 len)
                   :collect (vm-read vm n))))
-      (2 (error ":char is not implemented!"))  ; char
+      (2 (decode-char vm (1+ addr)))  ; char
       (3 (error ":str is not implemented!")))))  ; str
 
 (defun decode-op (vm)
