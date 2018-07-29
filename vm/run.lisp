@@ -56,7 +56,20 @@
          (all (loop
                 :for addr :from (1+ at) :below (+ at len)
                 :collect (vm-read vm addr))))
-    (code-char (decode-codepoint (apply #'vector 1st all)))))
+    (values (code-char (decode-codepoint (apply #'vector 1st all)))
+            len)))
+
+(defun decode-string (vm at)
+  (let* ((len (vm-read vm at))
+         (buf nil))
+    (loop
+      :for chnum :from 0 :below len
+      :with bytes := 0
+      :do (multiple-value-bind (ch len)
+              (decode-char vm (+ 1 at bytes))
+            (incf bytes len)
+            (push ch buf)))
+    (concatenate 'string (nreverse buf))))
 
 (defun decode-data (vm addr)
   (let ((type (vm-read vm addr)))
@@ -67,7 +80,7 @@
                   :for n :from (+ addr 2) :below (+ addr 2 len)
                   :collect (vm-read vm n))))
       (2 (decode-char vm (1+ addr)))  ; char
-      (3 (error ":str is not implemented!")))))  ; str
+      (3 (decode-string vm (1+ addr))))))  ; str
 
 (defun decode-op (vm)
   (let* ((opcb (prog1
