@@ -76,6 +76,7 @@
 
     (loop
       :for k :being :each :hash-keys :of (getf program :datamap) :using (hash-value v)
+      :do (assert (<= v (length encoded-data)))
       :do (setf (gethash k datamap2)
                 (loop :for n :from 0 :below v :sum (length (aref encoded-data n)))))
     (setf (getf program :datamap2) datamap2)
@@ -83,7 +84,7 @@
     (loop
       :for op :across (getf program :code)
       :do (vector-push-extend (encode-op op program) encoded-code))
-    (setf code-size(apply #'+ (map 'list #'length encoded-code)))
+    (setf code-size (apply #'+ (map 'list #'length encoded-code)))
 
       (loop
         :for k :being :each :hash-keys :of (getf program :datamap) :using (hash-value v)
