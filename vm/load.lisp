@@ -29,18 +29,6 @@
     (or (and (char= (char s 0) #\r) (parse-integer (subseq s 1)))
         7)))
 
-(defun calc-data-offset (idx data)
-  (loop
-    :for n :from 0 :below idx
-    :for d := (aref data n)
-    :sum (ecase (getf d :type)
-           (:int (+ 1 1))
-           (:byte (+ 1 1))
-           (:label (+ 1 1))
-           (:bytes (+ 2 (length (getf d :value))))
-           (:char (+ 1 (length (babel:string-to-octets (getf d :value)))))
-           (:str (+ 2 (length (babel:string-to-octets (getf d :value))))))))
-
 (defun encode-operand (operand op program)
   (ecase (getf operand :type)
     (:null nil)
