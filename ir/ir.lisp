@@ -74,7 +74,7 @@
                                         :opr3 (list :type :null))
                                   codevec)))
                         (incf n)
-                        (setf (gethash value datamap) pos)
+                        (setf (gethash value jumptable) pos)
                         (list :type :label :value value)))
                      (t dat)))))
       (loop
