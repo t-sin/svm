@@ -62,9 +62,15 @@
                (cond ((member type '(:byte :int :str))
                       (let ((pos (vector-push-extend dat datavec))
                             (name (intern (format nil "$name~a$" *name-count*) :keyword)))
+                        (vector-push-extend
+                         (list :op (find :load +opcode-specs+ :key #'<instruction>-name)
+                               :opr1 (list :type :const :value pos)
+                               :opr2 (list :type :reg :value (intern (format nil "R~a" 5) :keyword))
+                               :opr3 (list :type :null))
+                         codevec)
                         (incf *name-count*)
                         (setf (gethash name datamap) pos)
-                        (list :type :const :value name)))
+                        (list :type :reg :value (intern (format nil "R~a" 5) :keyword))))
                      ((eq type :label)
                       (let ((pos (vector-push-extend
                                   (list :op (find :load +opcode-specs+ :key #'<instruction>-name)
