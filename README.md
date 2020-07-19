@@ -1,8 +1,7 @@
 # String VM
 
-- register based
-- codes and datum are stored in the same memory
-
+*SVM* is an experimental computing environment.
+It is characterized by textual memory representation, this means, program states are visible as little-structural string format.
 
 ## Goals
 
